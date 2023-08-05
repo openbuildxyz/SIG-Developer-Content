@@ -42,13 +42,13 @@ uvd并向现场观众介绍了由Meta（原Facebook）公司开发的Move语言�
 
 而后，在OpenBuild社区支持下，我们在现场为参会观众准备了精美茶歇。
 
-![](https://openbuild-1259776727.cos.ap-shanghai.myqcloud.com/Task/IMG_4186.jpg)
+
 
 ![](https://openbuild-1259776727.cos.ap-shanghai.myqcloud.com/Task/IMG_4175.jpg)
 
 ![](https://openbuild-1259776727.cos.ap-shanghai.myqcloud.com/Task/IMG_4173.jpg)
 
-![](https://openbuild-1259776727.cos.ap-shanghai.myqcloud.com/Task/IMG_4174.jpg)
+
 
 
 
