@@ -1,3 +1,5 @@
+[phantom-permit.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/phantom-permit.sol)
+
 # 幻像函数-允许函数
 
 **名称：** 幻象功能-允许功能

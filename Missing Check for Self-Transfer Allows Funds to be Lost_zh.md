@@ -1,3 +1,5 @@
+[self-transfer.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/self-transfer.sol)
+
 # 自助转账支票缺失导致的资金丢失
 
 **名称：** 自助转账支票缺失导致资金丢失

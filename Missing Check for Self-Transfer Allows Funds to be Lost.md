@@ -1,3 +1,5 @@
+[self-transfer.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/self-transfer.sol)
+
 # Missing Check for Self-Transfer Allows Funds to be Lost
 
 **Name:** Missing Check for Self-Transfer Allows Funds to be Lost

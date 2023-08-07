@@ -1,16 +1,16 @@
 [Precision-loss.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Precision-loss.sol)
 
-# Precision Loss - Rounded down to zero
+# 精度损失 - 向下舍入为零
 
-**Name:** Precision Loss - rounding down to zero
+**名称：** 精度损失 - 向下舍入为零
 
-**Description:** Support all the ERC20 tokens, as those tokens may have different decimal places. For example, USDT and USDC have 6 decimals. So, in the calculations, one must be careful.
+**描述：** 支持所有 ERC20 代币，因为这些代币可能有不同的小数位。 例如，USDT和USDC有6位小数。 所以，在计算的时候，一定要小心。
 
-**Mitigation:**
+**解决办法：**
 
-Avoid any situation that if the numerator is smaller than the denominator, the result will be zero. Rounding down related issues can be avoided in many ways: 1.Using libraries for rounding up/down as expected 2.Requiring result is not zero or denominator is <= numerator 3.Refactor operations for avoiding first dividing then multiplying, when first dividing then multiplying, precision lost is amplified
+避免分子小于分母，结果为零的情况。 与下舍入相关的问题可以通过多种方式避免： 1.使用库按预期向上/向下舍入 2.要求结果不为零或分母 <= 分子 3.重构操作以避免先除后乘，先除后乘 乘法，精度损失被放大
 
-**REF:**
+**参考：**
 
 https://twitter.com/1nf0s3cpt/status/1675805135061286914
 
@@ -20,7 +20,7 @@ https://github.com/sherlock-audit/2023-02-surge-judging/issues/122
 
 https://dacian.me/precision-loss-errors#heading-rounding-down-to-zero
 
-**SimplePool Contract:**
+**SimplePool 合约样例:**
 
 ```jsx
 contract SimplePool {
@@ -57,9 +57,9 @@ contract SimplePool {
 }
 ```
 
-***\*How to Test:\****
+***\*测试方法:\****
 
-forge test --contracts src/test/**Precision-loss.sol** -vvvv
+仿真测试--contracts src/test/**Precision-loss.sol** -vvvv
 
 ```jsx
 // This function is declared as 'view' which means it will not modify the contract's state.
@@ -69,6 +69,6 @@ function testRounding_error() public view {
 }
 ```
 
-**Red box: reward is rounding to zero.**
+**红色框：奖励四舍五入为零。**
 
 ![img](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F23257271-d3d1-44fc-956b-079a7d73ba68%2FUntitled.png?table=block&id=578e2130-6152-405e-9884-5d4d89191a44&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

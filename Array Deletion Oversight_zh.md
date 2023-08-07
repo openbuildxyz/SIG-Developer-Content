@@ -1,3 +1,5 @@
+[Array-deletion.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Array-deletion.sol)
+
 # 数组删除疏忽
 
 **名称：** 数组删除疏忽：导致数据不一致

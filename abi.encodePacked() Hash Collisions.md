@@ -1,3 +1,5 @@
+[Hash-collisions.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Hash-collisions.sol)
+
 # abi.encodePacked() Hash Collisions
 
 **Name:** abi.encodePacked() Hash Collisions

@@ -1,3 +1,5 @@
+[Struct-deletion.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Struct-deletion.sol)
+
 # 结构删除疏忽
 
 **名称：** 结构删除疏忽

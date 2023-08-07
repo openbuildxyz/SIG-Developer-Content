@@ -1,3 +1,5 @@
+[Hash-collisions.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Hash-collisions.sol)
+
 # abi.encodePacked() 哈希冲突
 
 **名称：** abi.encodePacked() 哈希冲突
