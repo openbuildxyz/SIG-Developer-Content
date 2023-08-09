@@ -1,7 +1,5 @@
 # SIG-Developer-Content
 
-<div align="center"><strong>Web3 Developer Content SIG@OpenBuild</strong></div>
-<br/>
 <div align="center">Language:  <a href="https://github.com/openbuildxyz/SIG-Developer-Content/blob/main/README_zh.md">🇨🇳中文</a>｜ <a href="https://github.com/openbuildxyz/SIG-Developer-Content">🇺🇸English</a> </div>
 
 ## Introduction
