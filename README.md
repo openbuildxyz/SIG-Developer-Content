@@ -1,37 +1,33 @@
-# web3-content
+# SIG-Developer-Content
 
-内容小组工作协作库.
+<center><strong>Web3 Developer Content SIG@OpenBuild</strong></center>
 
-OpenBuild 是一个开源 Web3 开发者社区，我们的使命是帮助 Web2 开发者更好的进入 Web3 ，只要内容符合这一使命。
-大家都可以提交任务，有兴趣的志愿者则可以认领任务。
+<center>Language:  <a href="https://github.com/openbuildxyz/SIG-Developer-Content/blob/main/README_zh.md">🇨🇳中文</a>｜ <a href="https://github.com/openbuildxyz/SIG-Developer-Content">🇺🇸English</a> </center>
 
-## 任务流程
+## Introduction
+OpenBuild is an open-source Web3 developer community. Our mission is to help Web2 developers better transition into Web3, as long as the content aligns with this mission. 
+Everyone is allowed to submit tasks, and interested volunteers can claim these tasks.
 
-* Open Propose（开放提案）: 任务都可以提开放提案， 在社区讨论通过后，成为一个Task（任务）。
-* Task（任务）: 一个任务有明确的工作描述、工作量、赏金额。任务分三个阶段（使用 3 个不同的Issue标签）：
-  * 待认领：志愿者根据自己的兴趣与时间安排认领 
-  * 进行中：志愿者应按任务时间要求完成，要不可能会影响奖励发放
-  * 完成：按任务要求，提交 PR（若有）， PR 合并后，任务完成
+## Task Process
+* Open Propose: All tasks can be proposed openly. After discussion and approval in the community, they become a Task.
+* Task: A task has a clear job description, workload, and reward amount. Tasks are divided into three stages (using 3 different Issue labels):
+* To be claimed: Volunteers can claim based on their interests and time schedule.
+* In progress: Volunteers should complete the task according to the time requirements, otherwise, it may affect the distribution of rewards.
+* Completed: According to the task requirements, submit a PR (if any). After the PR is merged, the task is completed.
 
+Rewards are settled on a monthly basis. After the settlement is complete, the task is labeled as "Settled".
+> We ask all volunteers first to complete their information in the [Volunteer Form](https://www.notion.so/openbuild/9dd3778c1c9a44c686d36ef1b067ff19?v=790d75de4aa041a59d3fc6814bd2d041&pvs=4).
 
-奖励按月结算，在结算完成之后，该任务添加“已结算” 标签。
-> 请各位志愿者先在[志愿者表格](https://www.notion.so/openbuild/9dd3778c1c9a44c686d36ef1b067ff19?v=790d75de4aa041a59d3fc6814bd2d041&pvs=4) 完善自己的信息。
+## How to Publish a Task
+Any user can submit an **Open Propose** Issue on the [Issue Page](https://github.com/openbuildxyz/web3-content/issues). 
+The Open Propose describes what the task will do and the approximate workload. 
+The community will discuss the Open Propose. If it aligns with the mission and is helpful to the community, the Open Propose will be converted into a Task.
 
+## How to Claim a Task
+Claim a task on the [Issue Page](https://github.com/openbuildxyz/web3-content/issues)
 
-
-## 如何发布任务
-任何用户在 [Issue 页面](https://github.com/openbuildxyz/web3-content/issues) 都可提交 **Open Propose** Issue 
-Open Propose 描述该任务要做什么，大概有多大的工作量。
-社区将对该Open Propose 进行讨论，若符合使命，且对社区有帮助，Open Propose 将转成一个Task（任务）。
-
-
-## 如何认领任务
-
-在 [Issue 页面](https://github.com/openbuildxyz/web3-content/issues)  认领任务
-
-
-## 提交任务
-按任务要求，提交 PR ，提交 PR 时，PR 标题备注 关联的 Issue 编号。
+## How to Submit a Task
+Submit a PR according to the task requirements. When submitting the PR, note the related Issue number in the PR title.
 
 
 
