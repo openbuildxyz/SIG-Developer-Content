@@ -1,8 +1,8 @@
 # SIG-Developer-Content
 
-<center><strong>Web3 Developer Content SIG@OpenBuild</strong></center>
+<div align="center"><strong>Web3 Developer Content SIG@OpenBuild</strong></div>
 <br/>
-<center>Language:  <a href="https://github.com/openbuildxyz/SIG-Developer-Content/blob/main/README_zh.md">🇨🇳中文</a>｜ <a href="https://github.com/openbuildxyz/SIG-Developer-Content">🇺🇸English</a> </center>
+<div align="center">Language:  <a href="https://github.com/openbuildxyz/SIG-Developer-Content/blob/main/README_zh.md">🇨🇳中文</a>｜ <a href="https://github.com/openbuildxyz/SIG-Developer-Content">🇺🇸English</a> </div>
 
 ## Introduction
 OpenBuild is an open-source Web3 developer community. Our mission is to help Web2 developers better transition into Web3, as long as the content aligns with this mission. 
