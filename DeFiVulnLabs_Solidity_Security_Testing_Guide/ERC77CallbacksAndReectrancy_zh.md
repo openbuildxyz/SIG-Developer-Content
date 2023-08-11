@@ -127,5 +127,5 @@ function tokensReceived(
 // 接收以太币的回退函数
 receive() external payable {}
 ```  
-**红色：** 绕过最大铸造次数为1000的限制。
+**红框：** 绕过最大铸造次数为1000的限制。
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F65488d49-0d6a-4c73-ab8d-75827b6a3fae%2FUntitled.png?table=block&id=5970a19d-75ee-44d3-9455-3fedec380a37&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)
