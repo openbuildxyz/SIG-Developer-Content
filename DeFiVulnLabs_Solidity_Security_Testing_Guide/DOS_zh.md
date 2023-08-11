@@ -92,6 +92,6 @@ contract Attack {
     }
 }
 ```  
-**红框：在攻击漏洞后，没有人能够赢得这个游戏  
+**红框：** 在攻击漏洞后，没有人能够赢得这个游戏  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F250bdebe-a8ed-459a-b62f-bcf5c992c156%2FUntitled.png?table=block&id=17d7c11c-3273-49da-95a4-d6ba9817ad4b&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)
 
