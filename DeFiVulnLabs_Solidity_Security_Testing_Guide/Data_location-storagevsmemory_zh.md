@@ -1,27 +1,30 @@
-# 数据位置 - 存储与内存
+# 数据位置 - 存储 VS 内存
 [DataLocation.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/DataLocation.sol)  
-**名称：** 数据位置混淆漏洞  
+
+**名称：** 数据位置混淆漏洞   
+
 **描述：**  
-updaterewardDebt函数中滥用用户的存储和内存引用。  
-updaterewardDebt 函数正在更新 UserInfo 结构体的rewardDebt 值存储在内存中。问题是这在函数调用之间不会持续存在。  
-一旦函数执行完毕，内存就会被清除，所做的更改也会丢失。  
+在 updaterewardDebt 函数中错误地使用了用户的storage和memory。
+
+updaterewardDebt 函数更新存储在memory中的 UserInfo 结构体的 rewardDebt 值。  
+问题在于，这些更新不会在函数调用之间持久化。一旦函数执行完成，内存会被清除，更改将丢失。
 
 
-**缓解建议：**
-确保函数参数中内存和存储的正确使用。明确所有位置。  
+**缓解措施：**  
+确保函数参数中正确使用了内存和存储位置。明确指定所有位置。  
 
 **参考：**  
 https://mudit.blog/cover-protocol-hack-analysis-tokens-minted-exploit/  
 https://www.educative.io/answers/storage-vs-memory-in-solidity  
 
 
-数组合约：（紫色字为固定功能）
-```
+数组合约：（紫色字为修复函数）
+```solidity
 contract Array is Test {
     mapping(address => UserInfo) public userInfo; // 存储
 
     struct UserInfo {
-        uint256 amount; // 用户抵押了多少代币
+        uint256 amount; // 用户质押了多少代币
         uint256 rewardDebt; // 奖励债务，请参阅下面的说明
     }
 
@@ -37,6 +40,8 @@ contract Array is Test {
 }
 ```  
 **如何测试：**  
+forge test --contracts src/test/DataLocation.sol-vvvv  
+
 ```
 // 演示Solidity中内存和存储数据位置之间差异的函数
 function testDataLocation() public {
@@ -49,7 +54,7 @@ function testDataLocation() public {
     // 创建Array合约的新实例
     ArrayContract = new Array();
 
-    // 将Array合约中的rewardDebt存储变量更新为100
+    // 将Array合约中的rewardDebt变量更新为100
     ArrayContract.updaterewardDebt(100); 
 
     // 检索合约地址的userInfo结构并打印rewardDebt变量
@@ -71,6 +76,6 @@ function testDataLocation() public {
     console.log("Updated rewardDebt", newrewardDebt);
 }
 ```  
-**红色框：** 错误更新的奖励债务  
-**紫色框：** 问题已修复
+**红框：** 错误更新的rewardDebt  
+**紫框：** 问题已修复
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F1cf5afb4-a281-43e4-abf5-31831f3b874f%2FUntitled.png?table=block&id=ebe353c4-5056-4d72-aff6-064bde3c21a8&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

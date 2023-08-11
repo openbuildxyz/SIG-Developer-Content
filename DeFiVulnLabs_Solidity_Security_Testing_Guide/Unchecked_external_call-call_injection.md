@@ -3,10 +3,7 @@
  **Name:** Unsafe Call Vulnerability
 
 **Description:**  
-In TokenWhale contract's approveAndCallcode function. The vulnerability allows an
-arbitrary call to be executed with arbitrary data, leading to potential security risks
-and unintended consequences. The function uses a low-level call (_spender.call(_extraData))
-to execute code from the _spender address without any validation or checks on the provided _extraData.
+In TokenWhale contract's approveAndCallcode function. The vulnerability allows an arbitrary call to be executed with arbitrary data, leading to potential security risks and unintended consequences. The function uses a low-level call (_spender.call(_extraData)) to execute code from the _spender address without any validation or checks on the provided _extraData.
 This can lead to unexpected behavior, reentrancy attacks, or unauthorized operations.
 
 This excersise is about  a low level call to a contract where input and return values are not checked

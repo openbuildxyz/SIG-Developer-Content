@@ -1,15 +1,15 @@
 # 通货紧缩/转账费用代币不兼容  
 [fee-on-transfer.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/fee-on-transfer.sol)  
 
-**名称：** STA代币具有通货紧缩模型，向接收者收取1%的转账费。  
+**名称：** STA 代币采用通缩模型，向收款人收取 1% 的转账手续费。  
 
 **描述：**  
 实际存入金额可能低于函数参数depositAmount指定的金额。  
 
-VulnVault：通货紧缩/转账费用代币不兼容   
+VulnVault：通货紧缩/转账手续费代币不兼容   
 
 **缓解建议：**  
-首先转移代币，然后比较前后的代币余额以计算实际存入金额。  
+首先转移代币，然后比较前后的代币余额，以计算实际存入金额。  
 
 **参考：**  
 https://twitter.com/1nf0s3cpt/status/1671084918506684418  
@@ -97,7 +97,7 @@ contract Vault {
 **如何测试：**  
 forge test --contracts src/test/fee-on-transfer.sol-vvvv  
 ```
-// 测试转账费用漏洞的函数
+// 测试转账手续费漏洞的函数
     function testVulnFeeOnTransfer() public {
         // Alice的地址设置为虚拟机中的第一个地址
         address alice = vm.addr(1);
@@ -114,10 +114,10 @@ forge test --contracts src/test/fee-on-transfer.sol-vvvv
         // 在扣除1%的转账费后，在控制台中记录Alice的余额
         console.log("Alice's STA balance:", STAContract.balanceOf(alice)); // 收取1%的费用
         
-        // 在虚拟机中的Alice帐户上发起“恶作剧”（如果没有其他上下文，则不清楚作恶的作用）
+        // 在虚拟机中的Alice帐户上发起“恶作剧”（如果没有其他上下文，则不清楚作恶的做了什么）
         vm.startPrank(alice);
         
-        // Alice批准易受攻击的Vault合约代表她花费尽可能多的代币
+        // Alice授权易受攻击的Vault合约代表她花费尽可能多的代币
         STAContract.approve(address(VulnVaultContract), type(uint256).max);
         
         //从Alice的账户将10000个代币存入易受攻击的Vault合约

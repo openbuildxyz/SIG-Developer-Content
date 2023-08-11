@@ -3,10 +3,13 @@
 **名称：** 私有数据泄露  
 
 **描述：**  
-Solidity将合约中定义的变量存储在插槽中。每个插槽最多可容纳32字节或256位。存储在链上的所有数据，无论是公有的还是私有的，都可以读取，因此可以通过预测私有数据所在的内存槽从Vault合约中读取私有数据。  
-如果在生产环境中使用Vault合约，恶意行为者可能会采用类似的技术来访问敏感信息，例如用户密码。  
+Solidity在合约中定义的变量存储在插槽(slots)中。每个插槽可以容纳最多32字节或256位。  
+鉴于链上存储的所有数据，无论是公开的还是私有的，都可以被读取，  
+因此可以通过预测私有数据所在的内存插槽来从Vault合约中读取私有数据。
 
-**缓解建议：**  
+如果Vault合约在生产环境中被使用，恶意行为者可能使用类似的技术来访问敏感信息，如用户密码。  
+
+**缓解方法：**  
 避免将敏感数据存储在链上。   
 
 **参考**  
@@ -54,10 +57,10 @@ forge test --contracts src/test/Privatedata.sol-vvvv
     // testReadprivatedata()的函数声明，这是一个公共函数。
 function testReadprivatedata() public {
         
-    // 创建带有参数“123456789”的Vault合约的新实例。
+    // 创建Vault合约的新实例,其中参数为“123456789”。
     VaultContract = new Vault(123456789);
 
-    // 使用Vault合约地址和位置（0）调用`vm.load`函数
+    // 将Vault合约地址和插槽编号0作为vm.load函数的参数
     // “vm.load”函数从指定合约的存储槽中加载数据。
     // 在这里，读取合约的第0个存储槽。在Solidity中，存储布局从插槽0开始。
     bytes32 leet = vm.load(address(VaultContract), bytes32(uint256(0)));
@@ -65,15 +68,16 @@ function testReadprivatedata() public {
     // 记录第一个存储槽的值，将bytes32值转换为uint256。
     console.log(uint256(leet));
 
-    // 再次调用“vm.load”函数，但这一次，它使用来自VaultContract合约的“getArrayLocation”方法来计算特定数组元素的存储槽。
-    // 这是因为以太坊中的数组不是存储在连续的块中，而是对每个元素进行哈希处理以找到其位置。
-    // 在这里，假设Vault合约中有一个数组，并且您正在尝试访问插槽1中的数据（基于您的参数）
+    // 使用 vm.load 函数再次读取数据，
+    // 但这次使用了VaultContract中的getArrayLocation方法来计算动态数组中特定元素的存储插槽。
+    // 这是因为在以太坊中，数组的存储不是在连续的块中，而是通过哈希计算找到每个元素的位置
+    // 在这里，假设Vault合约中有一个数组，并且您正在尝试访问插槽1中的数据（基于你的参数）
     bytes32 user = vm.load(
         address(VaultContract),
         VaultContract.getArrayLocation(1, 1, 1)
     );
         
-    // 记录从合约存储读取的特定数组元素的值，将其从 bytes32转换为uint256。
+    // 记录从合约存储读取的特定数组元素的值，将其从bytes32转换为uint256。
     console.log(uint256(user));
 }
 ```  

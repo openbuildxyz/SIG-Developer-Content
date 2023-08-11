@@ -1,9 +1,9 @@
-# 失败后不回滚  
+# 失败时没有回滚  
 [Returnfalse.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Returnfalse.sol)  
-**名称：** 失败后不回滚  
+**名称：** 失败时没有回滚  
 
-**描述：**
-有些令牌在失败时不会回滚，而是返回false（例如 ZRX）。  
+**描述：**  
+有些代币在失败时不会回滚，而是返回false（例如 ZRX）。  
 ```
 ZRX transfer return false:
 function transfer(address _to, uint _value) returns (bool) {
@@ -16,7 +16,7 @@ return true;
 } else { return false; }
 }
 ```  
-**缓解建议：**  
+**缓解措施：**  
 使用OpenZeppelin的SafeERC20库并将Transfer更改为 safeTransfer。  
 **合约：**  
 ```
@@ -55,9 +55,9 @@ function testTransfer() public {
     // 开始一个可能模拟恶意活动或行为的作恶
     // 或者为指定地址的测试创建某种非典型条件
     vm.startPrank(0xef0DCc839c1490cEbC7209BAa11f46cfe83805ab);
-    // 尝试将123个单位的ZRX代币从合约转移到此合约。
-    // 如果传输失败，“transfer”方法返回‘false’而不是回滚
-    zrx.transfer(address(this), 123); //返回false而不是回滚
+    // 尝试将123个单位的ZRX代币从合约转移到当前合约。
+    // 如果转帐失败，“transfer”方法返回‘false’而不是回滚
+    zrx.transfer(address(this), 123); //返回false，不回滚
     // 停止作恶，这可能会使情况恢复正常
     vm.stopPrank();
 }
@@ -69,13 +69,14 @@ function testSafeTransferFail() public {
     // 这行代码被注释掉了。它似乎在设置一个期望，即函数应该回滚是，发出消息“SafeERC20：ERC20 操作未成功”。此预期可能会用于测试。
     // 但是，URL中提到的问题表明此函数在此测试环境中不起作用
     // vm.expectRevert("SafeERC20: ERC20 operation did not succeed");
-    // 尝试将123个ZRX代币从合同“安全”转移到本合同。
-    // 与常规的“transfer”方法不同，如果传输失败，“safeTransfer”将回滚。
+    // 尝试将123个ZRX代币从合约“安全”转移到本合约。
+    // 与常规的“transfer”方法不同，如果转帐失败，“safeTransfer”将回滚。
     zrx.safeTransfer(address(this), 123); //回滚
     // 停止作恶
     vm.stopPrank();
 }
 ```  
-**红色框：** 失败时不回滚。    
+**红色框：** 失败时不回滚。   
+
 **紫色框：** 失败时回滚，使用safeTranser。
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F70a109c0-22ec-4d60-9a60-494b7a5aae5c%2FUntitled.png?table=block&id=af8e2066-e87c-4f97-9fe0-774e6c2888d8&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=1840&userId=&cache=v2)

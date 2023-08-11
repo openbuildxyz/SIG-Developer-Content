@@ -1,10 +1,13 @@
 # 签名重放
 [SignatureReplay.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/SignatureReplay.sol)  
 **名称：** 签名重放漏洞  
-**描述：**  
-在这种情况下，Alice签署了一项交易，允许Bob将代币从Alice 的账户转移到 Bob 的账户。  
 
-然后，Bob在多个合约（在本例中为 TokenWhale 和 SixEyeToken 合约）上重放此签名，每次都授权将代币从Alice的账户转移到他的账户。这是可能的，因为合约使用相同的方法来签署和验证交易，但它们不共享nonce值来防止重放攻击。   
+**描述：**  
+在这种情况下，Alice签署了一项交易，允许Bob将代币从Alice的账户转移到Bob 的账户。  
+
+然后，Bob在多个合约（在本例中为 TokenWhale 和 SixEyeToken 合约）上重放此签名，  
+每次都授权将代币从Alice的账户转移到他的账户。这是可能的，因为合约使用相同的方法来签署和验证交易，  
+但是它们没有共享用于防止重放攻击的nonce。   
 
 缺少针对签名重放攻击的保护，可以多次使用相同的签名来执行函数。  
 
@@ -107,7 +110,7 @@ function testSignatureReplay() public {
     // 使用地址的私钥对哈希进行签名
     (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, hash);
 
-    // 记录签名组件
+    // 记录签名组成部分
     emit log_named_uint("v", v);
     emit log_named_bytes32("r", r);
     emit log_named_bytes32("s", s);
@@ -118,7 +121,7 @@ function testSignatureReplay() public {
     // 记录签名者的地址
     emit log_named_address("alice_address", alice_address);
 
-    // 通知可能的攻击
+    // 提示可能的攻击
     emit log_string(
         "If attacker got the Alice's signature, the attacker can replay this signature on the others contracts with same method."
     );
@@ -126,7 +129,7 @@ function testSignatureReplay() public {
     // Bob变成了恶作剧者
     vm.startPrank(bob);
 
-    // Bob使用Alice的签名将代币从Alice的账户转移到他的账户
+    // Bob使用Alice的签名将代币从Alice的账户转移到他自己的账户
     TokenWhaleContract.transferProxy(
         address(alice),
         address(bob),
@@ -148,7 +151,7 @@ function testSignatureReplay() public {
         "Try to replay to another contract with same signature"
     );
 
-    //在重放之前用另一个代币记录Bob的余额。
+    //在重放之前，记录Bob在另一个代币中的余额。
     emit log_named_uint(
         "Before the replay, SIX token balance of bob:",
         SixEyeTokenContract.balanceOf(address(bob))

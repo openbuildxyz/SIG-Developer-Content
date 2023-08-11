@@ -1,21 +1,21 @@
 # 不安全委托调用
 [Delegatecall.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Delegatecall.sol)  
-**名称：** 不安全委托调用漏洞
+**名称：** 不安全委托调用漏洞  
 **描述：**  
-代理合约所有者操纵漏洞是智能合约设计中的缺陷，这种缺陷允许攻击者操纵代理合约的owner，并且将其硬编码为0xdeadbeef。  
-这个漏洞的产生是由于在代理合约的回退函数中使用了delegatecall。   
-delegatecall允许攻击者在代理合约上下文中从委托合约调用pwn()函数，从而改变代理合约owner状态变量的值。  
-这允许智能合约在运行时从不同的地址动态加载代码。  
+Proxy合约中的变量owner被操控漏洞是智能合约设计中的缺陷，这种缺陷允许攻击者操纵Proxy合约的owner，并且onwer被硬编码为0xdeadbeef。  
+这个漏洞的产生是由于在Proxy合约的fallback函数中使用了delegatecall。   
+delegatecall允许攻击者在Proxy合约上下文中，调用Delegate合约中的pwn()函数，从而改变Proxy合约状态变量owner的值。  
+这允许智能合约在运行时，从不同的地址动态加载代码。  
 
 **场景：**  
-代理合约为了帮助用户调用逻辑合约而设计的
-代理合约的owner被硬编码为0xdeadbeef  
+Proxy合约是为了帮助用户调用逻辑合约而设计的。
+Proxy合约的owner被硬编码为0xdeadbeef。  
 你可以操纵代理合约的owner吗？  
 
 
-**修复建议：**  
-为了缓解代理合约所有者操纵漏洞，除非明确要求，否则不要使用delegatecall,并确保安全的使用delegatecall。  
-如果delegatecall对于合约的功能是必要的，请确保验证和清理输入以避免意外情况。  
+**解决方法：**  
+为了缓解Proxy合约所有者被操纵漏洞，除非明确要求delegatecall，否则不要使用。即使要使用时也要确保使用delegatecall的安全性。  
+如果对于合约的功能而言委托调用是必要的，务必验证和清理输入，以避免出现意外行为。  
 
 
 **Proxy 合约：**  
@@ -40,7 +40,7 @@ contract Proxy {
 
 forge test --contracts src/test/Delegatecall.sol-vvvv 
 ```
-// 测试使用delegatecall的场景的函数
+// 测试使用delegatecall场景的函数
 function testDelegatecall() public {
     // 初始化一个新的委托合约，即“逻辑合约”。
     DelegateContract = new Delegate(); 
@@ -54,13 +54,13 @@ function testDelegatecall() public {
 
     // 记录更改代理合约所有者操作的开始
     console.log("Change DelegationContract owner to Alice...");
-    // 设置消息的发送者为Alice。
+    // 将msg.sender设置为Alice。
     vm.prank(alice);
     // 通过delegatecall 调用Delegate合约的pwn函数.这就是漏洞。
     address(proxy).call(abi.encodeWithSignature("pwn()")); 
     // Proxy.fallback()将委托调用Delegate.pwn(), 使得Alice成为代理合约的所有者。
 
-    // 记录代理合约的新的所有者。
+    // 记录代理合约的新所有者。
     console.log("DelegationContract owner", proxy.owner());
     // 记录漏洞攻击完成。
     console.log(

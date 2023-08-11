@@ -1,19 +1,20 @@
 # 未经检查的外部调用——调用注入  
 [UnsafeCall.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/UnsafeCall.sol)  
+
 **名称：**  不安全的调用漏洞  
 **描述：**  
-在 TokenWhale 合约的 approveAndCallcode 函数中。该漏洞允许
-使用任意数据执行任意的调用，从而导致潜在安全风险和意外后果。
-该函数使用低级调用 (_spender.call(_extraData))执行来自 _spender 地址的代码，而不对所提供的 _extraData 进行任何验证或检查。  
+在TokenWhale合约的approveAndCallcode函数中，存在一个漏洞允许执行带有任意数据的任意调用，从而导致潜在的安全风险和意外后果。  
+该函数使用低级别的调用（_spender.call(_extraData)）来执行_spender地址的代码，而没有对提供的_extraData进行任何验证或检查。  
 这可能导致意外行为、重入攻击或未经授权的操作。
 
-本练习是关于对合约的低级调用，其中不检查输入和返回值  
-如果调用数据是可控的，就很容易导致任意函数的执行。  
+本练习涉及到对合约进行低级别调用，其中输入和返回值未经检查。  
+如果调用数据可控，就很容易引发任意函数执行 
 
 
 
-**缓解建议：**   
-应该尽可能的避免使用低级别的“调用”。  
+**缓解措施：**   
+尽量避免使用低级别的“call”。  
+
 **参考**  
 https://blog.li.fi/20th-march-the-exploit-e9e1c5c03eb9  
 
@@ -38,7 +39,7 @@ contract TokenWhale {
     }
 
     function isComplete() public view returns (bool) {
-        return balanceOf[player] >= 1000000; // 1 mil
+        return balanceOf[player] >= 1000000; // 1 百万
     }
 
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -77,7 +78,7 @@ contract TokenWhale {
         _transfer(to, value);
     }
 
-    /* 批准后调用合约代码*/
+    /* 授权然后调用合约代码*/
     function approveAndCallcode(
         address _spender,
         uint256 _value,
@@ -86,7 +87,7 @@ contract TokenWhale {
         allowance[msg.sender][_spender] = _value;
 
         bool success;
-        //有漏洞的调用执行不安全的代码 
+        //容易受到攻击的调用执行不安全的用户代码 
         (success, ) = _spender.call(_extraData);
         console.log("success:", success);
     }
@@ -114,10 +115,11 @@ function testUnsafeCall() public {
         "Alice tries to perform unsafe call to transfer asset from TokenWhaleContract"
     );
 
-    // 使用 vm.prank()函数更改 msg.sender
+    // 将msg.sender更改为Alice地址
     vm.prank(alice);
 
-    // Alice 使用表示对传递函数的调用的编码数据调用 approveAndCallcode函数
+    // Alice调用了approveAndCallcode函数，并传递了一个经过编码的数据，
+    // 这个数据表示了对transfer函数的调用。
     TokenWhaleContract.approveAndCallcode(
         address(TokenWhaleContract),
         0x1337, // 不影响漏洞利用
@@ -146,5 +148,5 @@ function testUnsafeCall() public {
 // 接收以太币的回退函数
 receive() external payable {}
 ```  
-**红色框：** 攻击成功，清空了TokenWhale合约。  
+**红色框：** 成功利用漏洞，成功掏空了TokenWhale合约。  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fef522203-1293-43f6-bf50-746d2a4b8457%2FUntitled.png?table=block&id=442bc8fe-4714-4112-a892-725b88a7b32e&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

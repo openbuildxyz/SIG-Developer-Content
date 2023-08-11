@@ -1,17 +1,21 @@
 # 先除后乘  
 [Divmultiply.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Divmultiply.sol)  
+
 **名称：** 精度问题——先除后乘  
+
 **描述：**  
-这些合约展示了在Solidity中执行除法运算时的一个常见问题，  
-因为Solidity不支持浮点数。由于整数截断，运算顺序可能会影响结果。   
+这些合约展示了在Solidity中执行除法操作时的一个常见问题，因为Solidity不支持浮点数。由于整数截断，操作顺序可能会影响结果。   
 
-在Miscalculation合约中，函数price中的(price / 100) * discount代码，先进行除法再进行乘法。由于Solidity会截断整数，进行除法时，如果price小于100，则price/100的结果将为0。这导致乘法的结果也为0。  
+在Miscalculation合约中，函数price中的(price / 100) * discount代码，先进行除法再进行乘法。由于Solidity进行除法时会截断整数，  
+如果price小于100，则price/100的结果将为0。这导致乘法的结果也为0。  
 
-另一方面，在Calculation合约中，price函数中的(price / 100) * discount代码，先执行乘法再进行除法。这样，结果将与乘法一样正确
-不会被截断，只有最终结果会被截断。  
+另一方面，在 Calculation 合约中，函数 price 在执行除法操作之前进行了乘法操作 (price * discount) / 100。  
+这样，结果将是正确的，  因为乘法不会被截断，只有最终的结果会被截断。
+ 
 
-**缓解建议：**  
-始终在除法之前执行乘法以避免丢失精度。  
+**缓解措施：**  
+始终在进行除法操作之前进行乘法操作，以避免失去精度。  
+
 
 **参考：**  
 https://twitter.com/1nf0s3cpt/status/1599774264437395461  

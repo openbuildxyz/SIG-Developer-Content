@@ -1,9 +1,11 @@
 # 通过暴露的元数据铸造NFT
 [NFTMint_exposedMetadata.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/NFTMint_exposedMetadata.sol)  
+
 **名称：** NFT通过暴露的元数据进行铸造的漏洞  
+
 **描述：**  
-该合约容易受到CVE-2022-38217的影响，这可能会导致项目中所有NFT的元数据提前披露。  
-因此，攻击者可以找到有价值的NFT，然后通过监控mempool来瞄准特定 NFT的铸造，并在二级市场上出售NFT以获取利润。  
+该合约存在CVE-2022-38217的漏洞，这可能会导致项目中所有NFT的元数据提前被披露。  
+因此，攻击者可以找到有价值的NFT，然后通过监控内存池来瞄准特定NFT的铸造，并在二级市场上出售NFT以获取利润。  
 问题是元数据是在铸造完成后才能可见的  
 
 **参考：**  
@@ -32,16 +34,19 @@ forge test --contracts src/test/NFTMint_exposedMetadata.sol-vvvv
 
 ```
 function testExploit() public {
-        //由于合约容易受到CVE-2022-38217的影响
-        //这可能会导致项目中所有NFT的元数据提前公开
-        //因此，攻击者可以找到有价值的NFT，然后通过监控Mempool来瞄准铸造指定的NFT，并在二级市场上出售NFT以获取利润
+        // 该合约存在 CVE-2022-38217 漏洞，
+        // 这可能导致项目中所有 NFT 的元数据提前暴露。
+        // 因此，攻击者可以找到有价值的 NFT，
+        // 并通过监视内存池来针对特定的 NFT 进行铸造，
+        // 然后在二级市场出售这些 NFT 以获取利润
 
         //例如，假设攻击者发现NFT#142是一种罕见的NFT，现在他只需监控内存池，直到NFT#141被铸造，然后再铸造NFT#142
         //通过cURL查看NFT的元数据 -> curl -k https://bafybeic23x4v75z7isyqhy5p6ylzqutm6lnpobwngaouovdu6qjjvt4wpu.ipfs.dweb.link/142.json
-        //问题是元数据只有在铸造完成后，才能可见
+        //问题在于，元数据应该在铸造完成后才能被查看。
 
-        //以太坊上的交易- 0xfa4434236d2a9717e3410d7cdc60eed6acfddb054f58bc779c07349a1f45ce6b
-        //以太坊上的交易 - 0x24af97355f6cec4ae02fff8bbf7144a02857e3ffd36a650aa295c62f6272cc83
+
+        //以太坊上的交易信息- 0xfa4434236d2a9717e3410d7cdc60eed6acfddb054f58bc779c07349a1f45ce6b
+        //以太坊上的交易信息 - 0x24af97355f6cec4ae02fff8bbf7144a02857e3ffd36a650aa295c62f6272cc83
 
         address attacker = 0x1fCebBb5D3EACd26e70b0BD1E54a979a479906aA;
         cheats.prank(attacker);
