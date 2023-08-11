@@ -2,9 +2,9 @@
 [Overflow.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Overflow.sol)  
 **名称：** 整数溢出漏洞  
 **描述：**  
-TimeLock智能合约的代码存在一个漏洞，这个漏洞导致攻击者可以提前从TimeLock合约中提取存入的资金。  
-该漏洞是因为increaseLockTime函数产生溢出问题，攻击者可以通过让变量lockTime发生溢出，从而来控制锁仓时间，  
-这使攻击者能够在实际的锁仓时间到期之前就提取资金。  
+TimeLock 合约在智能合约代码中存在一个漏洞，允许攻击者从 TimeLock 合约中提前提取其存款。  
+这个漏洞是因为 increaseLockTime 函数中发生了溢出，该函数以一种导致锁定时间回绕为 0 的方式操作锁定时间，  
+使得攻击者能够在实际等待期到期之前提取他们的资金  
 
 
 **场景：**     
@@ -13,15 +13,18 @@ TimeLock智能合约的代码存在一个漏洞，这个漏洞导致攻击者可
 用户还可以在这1周锁仓时间的基础上延长锁仓时间。
 
 
-1. 假设Alice和Bob都有1个以太币 
+1. Alice和Bob都有1个以太币的余额 
 2. 部署TimeLock合约  
-3. Alice和Bob都向TimeLock合约存入1个以太币，他们需要等待1周才能取出存入的以太币  
-4. Bob使他的变量lockTime发生溢出，Alice因为时间锁还未到期，所以她不能取出她的存入的这1个以太币。  
-5. 因为Bob的变量lockTime发生溢出，使其值变为0了，所以他可以取出他刚刚存入的这1个以太币 
+3. Alice和Bob都将1个以太币存入TimeLock，他们需要等待 1 周才能解锁以太币 
+4. Bob在他的锁定时间上造成了溢出
+5. Alice无法提取 1 个以太币，因为锁定时间尚未过期。
+6. Bob 可以提取 1 个以太币，因为锁定时间溢出为 0
+
 
 **发生什么了？**  
-攻击导致TimeLock.lockTime产生溢出，这使得攻击者能够在1周的锁仓时间之前就取出资金。  
-Import: 在版本低于0.8的Solidity中，没有SafeMath库  
+攻击导致了 TimeLock.lockTime 溢出，并能够在 1 周等待期之前提取。   
+
+Import: Solidity < 0.8 且没有使用 SafeMath 
 
 **解决方法：**  
 为了解决溢出问题，可以使用SafeMath库或者使用版本高于0.8的Solidity  
@@ -113,5 +116,7 @@ forge test --contracts src/test/Overflow.sol -vvvv
     }
 ```  
 **红色框：** TimeLock.lockTime发生溢出  
-**紫色框：** 溢出已修复
+
+**紫色框：** 溢出已修复  
+
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fd444eaff-b1ef-4171-8890-76186c4de58a%2FUntitled.png?table=block&id=6ec73bdb-955c-42b4-a7c6-5bce2bf97805&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)
