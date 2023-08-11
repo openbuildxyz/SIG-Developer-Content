@@ -18,6 +18,7 @@ return true;
 ```  
 **缓解措施：**  
 使用OpenZeppelin的SafeERC20库并将Transfer更改为 safeTransfer。  
+
 **合约：**  
 ```
 contract ContractTest is Test {
