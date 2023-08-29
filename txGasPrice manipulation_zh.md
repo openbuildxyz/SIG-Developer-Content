@@ -26,10 +26,10 @@ https://blog.pessimistic.io/ethereum-alarm-clock-exploit-final-thoughts-21334987
 
 ```jsx
 contract GasReimbursement {
-    uint public gasUsed = 100000; // Assume gas used is 100,000
-    uint public GAS_OVERHEAD_NATIVE = 500; // Assume native token gas overhead is 500
+    uint public gasUsed = 100000; // 假设使用的gas为100,000
+    uint public GAS_OVERHEAD_NATIVE = 500; // 假设原生代币 Gas 开销为 500
 
-    // uint public txGasPrice = 20000000000;  // Assume transaction gas price is 20 gwei
+    // uint public txGasPrice = 20000000000;  // 假设交易 Gas 价格为 20 gwei
 
     function calculateTotalFee() public view returns (uint) {
         uint256 totalFee = (gasUsed + GAS_OVERHEAD_NATIVE) * tx.gasprice;
@@ -49,21 +49,21 @@ contract GasReimbursement {
 
 ***\*测试方法:\****
 
-**仿真测试 --contracts src/test/**gas-price.sol**-vvvv**
+**forge test --contracts src/test/**gas-price.sol**-vvvv**
 
 ```jsx
-// Test function to check gas refund in the GasReimbursementContract.
+// 测试函数以检查 GasReimbursementContract 中的 Gas 退款。
 function testGasRefund() public {
-    // Get the balance of this contract before executing the transfer.
+    //在执行转账之前获取该合约的余额。
     uint balanceBefore = address(this).balance;
 
-    // Call the 'executeTransfer' function of the GasReimbursementContract, which should trigger a gas refund.
+    // 调用 GasReimbursementContract 的 'executeTransfer' 函数，这应该会触发 Gas 退款。
     GasReimbursementContract.executeTransfer(address(this));
 
-    // Calculate the balance of this contract after the transfer and subtract the gas cost (gas price) from it.
+    // 计算转账后该合约的余额，并从中减去gas费用（gas价格）。
     uint balanceAfter = address(this).balance - tx.gasprice; // --gas-price 200000000000000
 
-    // Calculate and log the profit obtained by the contract from the gas refund.
+    // 计算并记录合约从gas退款中获得的利润。
     console.log("Profit", balanceAfter - balanceBefore);
 }
 ```

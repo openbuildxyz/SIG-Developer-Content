@@ -39,7 +39,7 @@ contract SimpleBank {
     function withdraw(uint amount) public {
         require(balances[msg.sender] >= amount);
         balances[msg.sender] -= amount;
-        // the issue is here
+        // 问题在这
         payable(msg.sender).transfer(amount);
     }
 }
@@ -70,23 +70,23 @@ contract FixedSimpleBank {
 
 ***\*测试方法:\****
 
-**仿真测试 --contracts src/test/**payable-transfer.sol**-vvvv**
+**forge test --contracts src/test/**payable-transfer.sol**-vvvv**
 
 ```jsx
-// Test function to check a transfer failure in the SimpleBankContract.
+//测试函数以检查 SimpleBankContract 中的转账失败。
 function testTransferFail() public {
-    // Deposit 1 ether into the SimpleBankContract.
+    //将 1 以太币存入 SimpleBankContract 中。
     SimpleBankContract.deposit{value: 1 ether}();
 
-    // Assert that the balance in the SimpleBankContract is 1 ether.
-    // If it fails, the test will terminate with an error.
+    // 判断 SimpleBankContract 中的余额为 1 ether。
+     // 如果失败，测试将因错误而终止。
     assertEq(SimpleBankContract.getBalance(), 1 ether);
 
-    // Set an expectation that the next transaction should revert (fail).
+    // 设置下一个事务应该恢复（失败）的期望。
     vm.expectRevert();
 
-    // Try to withdraw 1 ether from the SimpleBankContract.
-    // This transaction is expected to fail and revert, as it attempts to withdraw more than the contract's balance.
+    // 尝试从 SimpleBankContract 中提取 1 个以太币。
+     // 该交易预计会失败并恢复，因为它尝试提取的金额超过了合约的余额。
     SimpleBankContract.withdraw(1 ether);
 }
 ```

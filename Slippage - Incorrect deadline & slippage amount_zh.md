@@ -35,20 +35,20 @@ contract ContractTest is Test {
         uint256 amountIn = 1 ether;
         uint256 amountOutMin = 0;
         //uint256 amountOutMin = 1867363899; //1867363899 INSUFFICIENT_OUTPUT_AMOUNT
-        // Path for swapping ETH to USDT
+        // ETH兑换USDT的路径
         address[] memory path = new address[](2);
         path[0] = address(WETH); // WETH (Wrapped Ether)
         path[1] = USDT; // USDT (Tether)
 
-        // No Effective Expiration Deadline
-        // The function sets the deadline to the maximum uint256 value, which means the transaction can be executed at any time,
-        // possibly under unfavorable market conditions.
+        // 无有效到期期限
+         // 该函数将deadline设置为最大uint256值，这意味着交易可以随时执行，
+         // 可能在不利的市场条件下。
         IUniswapV2Router02(UNISWAP_ROUTER).swapExactTokensForTokens(
             amountIn,
             amountOutMin,
             path,
             address(this),
-            type(uint256).max // Setting deadline to max value
+            type(uint256).max // 将截止日期设置为最大值
         );
 
         console.log("USDT", IERC20(USDT).balanceOf(address(this)));
@@ -57,43 +57,43 @@ contract ContractTest is Test {
 
 ***\*测试方法:\****
 
-**仿真测试** --contracts src/test/**Slippage-deadline.sol**-vvvv
+**forge test** --contracts src/test/**Slippage-deadline.sol**-vvvv
 
 ```
 function testswapTokensWithMaxDeadline() external payable {
-    // Approve the maximum allowance for UNISWAP_ROUTER to spend WETH tokens.
+    // 批准 UNISWAP_ROUTER 花费 WETH 代币的最大限额。
     WETH.approve(address(UNISWAP_ROUTER), type(uint256).max);
 ```
 
-    // Deposit 1 Ether (ETH) into WETH (Wrapped Ether) to get WETH tokens.
+    // 将1个以太币（ETH）存入WETH（Wrapped Ether）以获得WETH代币。
     WETH.deposit{value: 1 ether}();
     
-    // Define the amount of input tokens (WETH) to swap.
+    // 定义要交换的输入代币 (WETH) 的数量。
     uint256 amountIn = 1 ether;
     
-    // Define the minimum amount of output tokens (USDT) accepted after the swap.
-    // In this case, 'amountOutMin' is set to 0, which means the swap will not be reverted even if the output amount is 0.
+    // 定义交换后接受的最小输出代币（USDT）数量。
+    // 在这种情况下，'amountOutMin'设置为0，这意味着即使输出金额为0，交换也不会被恢复。
     uint256 amountOutMin = 0;
     
-    // Define the path for swapping ETH to USDT.
-    // The path contains two addresses: WETH (Wrapped Ether) and USDT (Tether).
+    // 定义ETH兑换USDT的路径。
+    // 该路径包含两个地址：WETH（Wrapped Ether）和USDT（Tether）。
     address[] memory path = new address[](2);
     path[0] = address(WETH); // WETH (Wrapped Ether)
     path[1] = USDT; // USDT (Tether)
     
-    // Perform the token swap using the Uniswap V2 Router 02.
-    // The function used is 'swapExactTokensForTokens', which means the contract will receive exactly the specified
-    // 'amountOutMin' or revert the transaction if it cannot receive at least 'amountOutMin' USDT tokens.
-    // The 'type(uint256).max' value as the deadline allows the transaction to be executed at any time.
+    // 使用 Uniswap V2 Router 02 执行代币交换。
+    // 使用的函数是'swapExactTokensForTokens'，这意味着合约将准确接收指定的
+    // 'amountOutMin' 或在无法接收至少 'amountOutMin' USDT 代币时恢复交易。
+    // 以 'type(uint256).max' 值作为截止时间，允许交易随时执行。
     IUniswapV2Router02(UNISWAP_ROUTER).swapExactTokensForTokens(
-        amountIn,          // The exact amount of input tokens (WETH) to be swapped.
-        amountOutMin,      // The minimum amount of output tokens (USDT) accepted after the swap.
-        path,              // The path representing the token swap route.
-        address(this),     // The address to receive the output tokens (USDT).
-        type(uint256).max  // Setting the deadline to the maximum uint256 value (no effective deadline).
+        amountIn,          // 要交换的输入代币 (WETH) 的确切数量。
+        amountOutMin,      // 兑换后接受的最小输出代币（USDT）数量。
+        path,              // 代表代币交换路由的路径。
+        address(this),     // 接收输出代币（USDT）的地址。
+        type(uint256).max  // 将截止日期设置为最大 uint256 值（无有效截止日期）。
     );
     
-    // Log the balance of USDT tokens held by this contract after the swap.
+    // 记录掉期后该合约持有的USDT代币余额。
     console.log("USDT", IERC20(USDT).balanceOf(address(this)));
 }
 

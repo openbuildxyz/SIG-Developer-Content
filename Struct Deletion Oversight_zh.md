@@ -79,7 +79,7 @@ contract FixedStructDeletion {
 
     function deleteStruct(uint256 structId) public {
         MyStruct storage myStruct = myStructs[structId];
-        // Check if all flags are deleted, then delete the mapping
+        // 检查是否所有标志都被删除，然后删除映射
         for (uint256 i = 0; i < 15; i++) {
             delete myStruct.flags[i];
         }
@@ -90,21 +90,21 @@ contract FixedStructDeletion {
 
 ***\*测试方法:\****
 
-仿真测试 --contracts src/test/**Struct-deletion.sol** -vvvv
+**forge test --contracts src/test/**Struct-deletion.sol** -vvvv
 
 ```jsx
-// Test function to check struct deletion in the StructDeletionBugContract.
+// 测试函数以检查 StructDeletionBugContract 中的结构删除。
 function testStructDeletion() public {
-    // Add a struct with ID 10 and values 10 and 10 to the StructDeletionBugContract.
+    //将 ID 为 10、值为 10 和 10 的结构添加到 StructDeletionBugContract。
     StructDeletionBugContract.addStruct(10, 10);
 
-    // Get the struct with ID 10 and values 10 and 10 from the StructDeletionBugContract.
+    // 从 StructDeletionBugContract 获取 ID 为 10 且值为 10 和 10 的结构。
     StructDeletionBugContract.getStruct(10, 10);
 
-    // Delete the struct with ID 10 from the StructDeletionBugContract.
+    // 从 StructDeletionBugContract 中删除 ID 为 10 的结构体。
     StructDeletionBugContract.deleteStruct(10);
 
-    // Attempt to get the struct with ID 10 and values 10 and 10 from the StructDeletionBugContract after deletion.
+    // 删除后尝试从 StructDeletionBugContract 中获取 ID 为 10、值为 10 和 10 的结构体。
     StructDeletionBugContract.getStruct(10, 10);
 }
 ```

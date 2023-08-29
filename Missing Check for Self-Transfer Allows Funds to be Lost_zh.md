@@ -29,7 +29,7 @@ contract SimpleBank {
     }
 
     function transfer(address _from, address _to, uint256 _amount) public {
-        // not check self-transfer
+        // 不检查自传输
         uint256 _fromBalance = _balances[_from];
         uint256 _toBalance = _balances[_to];
 
@@ -52,7 +52,7 @@ contract FixedSimpleBank {
     }
 
     function transfer(address _from, address _to, uint256 _amount) public {
-        //Mitigation
+        //解决办法
         **require(_from != _to, "Cannot transfer funds to the same address.");**
 
         uint256 _fromBalance = _balances[_from];
@@ -62,7 +62,7 @@ contract FixedSimpleBank {
             _balances[_from] = _fromBalance - _amount;
             _balances[_to] = _toBalance + _amount;
             /*
-            Another mitigation
+            另外的解决办法
             _balances[_id][_from] -= _amount;
             _balances[_id][_to] += _amount;
             */
@@ -73,25 +73,25 @@ contract FixedSimpleBank {
 
 ***\*测试方法:\****
 
-**仿真测试 --contracts src/test/self-transfer.sol -vvvv**
+**forge test --contracts src/test/self-transfer.sol -vvvv**
 
 ```jsx
-// Test function to check self-transfer within VSimpleBankContract.
+//测试函数以检查 VSimpleBankContract 内的自转账。
 function testSelfTransfer() public {
-    // Perform the first self-transfer of 10000 units from the contract to itself.
+    // 执行从合约到自身的第一次自转账 10000 个单位。
     VSimpleBankContract.transfer(address(this), address(this), 10000);
 
-    // Perform the second self-transfer of 10000 units from the contract to itself.
+    // 执行从合约到自身的第二次自转账 10000 单位。
     VSimpleBankContract.transfer(address(this), address(this), 10000);
 
-    // Get the balance of the contract at address `this` after the two transfers.
-    // It's assumed that this balance represents the total balance of "Alice."
+    // 两次转账后获取地址 `this` 的合约余额。
+     // 假设该余额代表“Alice”的总余额。
     VSimpleBankContract.balanceOf(address(this));
 
-    // The code mentions that the balance of "Alice" is increased by 10000,
-    // then decreased by 10000, resulting in a total balance of 20000 for "Alice."
-    // However, it's important to clarify that this is just a comment and not actual code execution.
-    // If this is meant to be real code, then uncommenting it would result in the calculations.
+    // 代码中提到“Alice”的余额增加了10000，
+     // 然后减少 10000，“Alice”的总余额为 20000。
+     // 但是，需要澄清的是，这只是一条注释，而不是实际的代码执行。
+     // 如果这是真正的代码，那么取消注释就会导致计算。
 }
 ```
 

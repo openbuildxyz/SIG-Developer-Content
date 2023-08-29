@@ -26,13 +26,13 @@ https://github.com/pessimistic-io/slitherin/blob/master/docs/nft_approve_warning
 contract VulnerableERC721 is ERC721, Ownable {
     constructor() ERC721("MyNFT", "MNFT") {}
 
-    //custom transferFrom function which missing NFT owner check.
+    //自定义的transferFrom函数缺少NFT所有者检查。
     function transferFrom(
         address from,
         address to,
         uint256 tokenId
     ) public override {
-        // direct transfer
+        // 直接转账
         _transfer(from, to, tokenId);
     }
 
@@ -48,7 +48,7 @@ contract VulnerableERC721 is ERC721, Ownable {
 contract FixedERC721 is ERC721, Ownable {
     constructor() ERC721("MyNFT", "MNFT") {}
 
-    //Mitigation: add token owner check
+    //措施：添加令牌所有者检查
     function transferFrom(
         address from,
         address to,
@@ -69,25 +69,25 @@ contract FixedERC721 is ERC721, Ownable {
 
 ***\*测试方法:\****
 
-**仿真测试 --contracts src/test/**NFT-transfer.sol**-vvvv**
+**forge test --contracts src/test/**NFT-transfer.sol**-vvvv**
 
 ```jsx
-// Test function to demonstrate a vulnerability in the VulnerableERC721Contract.
+// 测试函数以演示 VulnerableERC721Contract 中的漏洞。
 function testVulnerableERC721() public {
-    // Call the 'ownerOf' function of the VulnerableERC721Contract to check the current owner of token ID 1.
+    // 调用VulnerableERC721Contract的'ownerOf'函数来检查代币ID 1的当前所有者。
     VulnerableERC721Contract.ownerOf(1);
 
-    // Call the 'prank' function of the virtual machine (vm) and pass 'bob' as an argument.
-    // It's unclear what exactly the 'prank' function does, as it depends on the implementation of the virtual machine.
-    // The intention is likely to simulate some behavior related to 'bob'.
+    // 调用虚拟机 (vm) 的“prank”函数并传递“bob”作为参数。
+     // 目前还不清楚“恶作剧”函数到底做什么，因为它取决于虚拟机的实现。
+     // 意图很可能是模拟一些与“bob”相关的行为。
     vm.prank(bob);
 
-    // Call the 'transferFrom' function of the VulnerableERC721Contract.
-    // Attempt to transfer token ID 1 from 'alice' to 'bob'.
+    // 调用 VulnerableERC721Contract 的“transferFrom”函数。
+     // 尝试将令牌 ID 1 从 'alice' 传输到 'bob'。
     VulnerableERC721Contract.transferFrom(address(alice), address(bob), 1);
 
-    // Call the 'ownerOf' function again to check the owner of token ID 1 after the transfer attempt.
-    // The goal is to observe if the transfer has occurred as expected or if the vulnerability affects the ownership.
+    //尝试转账后再次调用 'ownerOf' 函数来检查代币 ID 1 的所有者。
+     // 目标是观察转移是否按预期发生或者漏洞是否影响所有权。
     console.log(VulnerableERC721Contract.ownerOf(1));
 }
 ```

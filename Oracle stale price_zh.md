@@ -33,7 +33,7 @@ contract ContractTest is Test {
     }
 
     function testUnSafePrice() public {
-        //Chainlink oracle data feed is not sufficiently validated and can return stale price.
+        //Chainlink 预言机数据源未经过充分验证，可能会返回过时的价格。
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         emit log_named_decimal_int("price", answer, 8);
     }
@@ -47,10 +47,10 @@ contract ContractTest is Test {
             uint80 answeredInRound
         ) = priceFeed.latestRoundData();
         /*
-        Mitigation:
-        answeredInRound: The round ID in which the answer was computed
-        updatedAt: Timestamp of when the round was updated
-        answer: The answer for this round
+        解决办法：
+         answerInRound：计算答案的回合 ID
+         UpdatedAt：回合更新的时间戳
+         答案：本轮的答案
         */
         require(answeredInRound >= roundId, "answer is stale");
         require(updatedAt > 0, "round is incomplete");
@@ -64,26 +64,26 @@ contract ContractTest is Test {
 
 ***\*测试方法:\****
 
-仿真测试 --contracts src/test/**Oracle-stale.sol** -vvvv
+forge test --contracts src/test/**Oracle-stale.sol** -vvvv
 
 ```// Function to test the potentially unsafe retrieval of price data from a price feed
     function testUnSafePrice() public {
-        // Retrieves the latest round data from the price feed
-        // The data retrieved is not validated for staleness or completeness, potentially leading to issues if the data is outdated or incomplete
+        // 从价格源中检索最新一轮数据
+         // 未验证检索到的数据的陈旧性或完整性，如果数据过时或不完整，则可能会导致问题
         (, int256 answer, , , ) = priceFeed.latestRoundData();```
 ```
 
-        // Emits a log with the potentially stale or invalid price
+        // 发出包含可能过时或无效价格的日志
         emit log_named_decimal_int("price", answer, 8);
     }
 
 ```// Function to test the safe retrieval of price data from a price feed
     function testSafePrice() public {
-        // Retrieves the latest round data from the price feed
-        // roundId: the unique identifier for the round
-        // answer: the price for this round
-        // updatedAt: the timestamp of when the round was updated
-        // answeredInRound: the round ID in which the answer was computed
+        // 从价格源中检索最新一轮数据
+         // roundId：回合的唯一标识符
+         //答案：本轮价格
+         // UpdatedAt：回合更新的时间戳
+         //answerInRound：计算答案的回合 ID
         (
             uint80 roundId,
             int256 answer,
@@ -93,19 +93,19 @@ contract ContractTest is Test {
         ) = priceFeed.latestRoundData();```
 ```
 
-        // Check that the answer is not stale by ensuring that the round ID of when the answer was computed is greater than or equal to the current round ID
-        // If not, this will cause the function to revert
+        // 通过确保计算答案时的回合 ID 大于或等于当前回合 ID 来检查答案是否过时
+         // 如果没有，这将导致函数恢复
         require(answeredInRound >= roundId, "answer is stale");
     
-        // Check that the round is complete by ensuring that the updatedAt timestamp is greater than 0
-        // If not, this will cause the function to revert
+        // 通过确保updatedAt时间戳大于0来检查回合是否完成
+         // 如果没有，这将导致函数恢复
         require(updatedAt > 0, "round is incomplete");
     
-        // Check that the answer is valid by ensuring that it's greater than 0
-        // If not, this will cause the function to revert
+        // 通过确保答案大于 0 来检查答案是否有效
+         // 如果没有，这将导致函数恢复
         require(answer > 0, "Invalid feed answer");
     
-        // Emits a log with the retrieved price
+        //发出包含检索到的价格的日志
         emit log_named_decimal_int("price", answer, 8);
     }
 

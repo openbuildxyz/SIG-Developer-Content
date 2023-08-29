@@ -90,37 +90,37 @@ contract FixedtakingRewards {
 
 ***\*测试方法:\****
 
-**仿真测试*--contracts src/test/**recoverERC20.sol** -vvvv**
+**forge test*--contracts src/test/**recoverERC20.sol** -vvvv**
 
 ```jsx
-// Test function to demonstrate a vulnerability in the VulnStakingRewardsContract.
+// 测试函数以演示 VulnStakeRewardsContract 中的漏洞.
 function testVulnStakingRewards() public {
-    // Log the balance of the RewardTokenContract held by this contract before the operations.
+    // 记录操作前该合约持有的RewardTokenContract的余额。
     console.log(
         "Before rug RewardToken balance in VulnStakingRewardsContract",
         RewardTokenContract.balanceOf(address(this))
     );
 
-    // Simulate some action related to 'alice' using the 'prank' function of the virtual machine (vm).
-    // The exact behavior of the 'prank' function depends on the virtual machine's implementation.
-    // The purpose here is likely to simulate an action by 'alice'.
+    // 使用虚拟机（vm）的“prank”功能模拟一些与“alice”相关的动作。
+     // “恶作剧”函数的确切行为取决于虚拟机的实现。
+     // 这里的目的很可能是模拟“alice”的动作。
     vm.prank(alice);
 
-    // Transfer 10,000 ether of RewardToken from address of this contract to the VulnStakingRewardsContract.
-    // The transfer is conducted through the 'transfer' function of the RewardTokenContract.
+    // 将 10,000 以太币的 RewardToken 从该合约地址转移到 VulnStakeRewardsContract。
+     // 转账是通过RewardTokenContract的“转账”功能进行的。
     RewardTokenContract.transfer(
         address(VulnStakingRewardsContract),
         10000 ether
     );
 
-    // Admin initiates a rug (withdraws) 1,000 ether of RewardToken from the VulnStakingRewardsContract.
-    // This operation is executed through the 'recoverERC20' function of the VulnStakingRewardsContract.
+    // 管理员从 VulnStakeRewardsContract 中发起 rug（提取）1,000 以太币的 RewardToken。
+     // 此操作通过 VulnStakeRewardsContract 的 'recoverERC20' 函数执行。
     VulnStakingRewardsContract.recoverERC20(
         address(RewardTokenContract),
         1000 ether
     );
 
-    // Log the balance of the RewardTokenContract held by this contract after the operations.
+    // 记录操作后该合约持有的RewardTokenContract的余额。
     console.log(
         "After rug RewardToken balance in VulnStakingRewardsContract",
         RewardTokenContract.balanceOf(address(this))

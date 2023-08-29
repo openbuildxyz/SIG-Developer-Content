@@ -44,9 +44,9 @@ contract HashCollisionBug {
         require(msg.value > 0, "Deposit amount must be greater than zero");
 
         bytes32 hash = createHash(_string1, _string2);
-        // createHash(AAA, BBB) -> AAABBB
-        // createHash(AA, ABBB) -> AAABBB
-        // Check if the hash already exists in the balances mapping
+        // 创建Hash(AAA, BBB) -> AAABBB
+        // 创建Hash(AA, ABBB) -> AAABBB
+        // 检查余额映射中是否已存在哈希值
         require(balances[hash] == 0, "Hash collision detected");
 
         balances[hash] = msg.value;
@@ -56,29 +56,29 @@ contract HashCollisionBug {
 
 ***\*测试方法:\****
 
-仿真测试 --contracts src/test/**Hash-collisions.sol**-vvvv
+forge test --contracts src/test/**Hash-collisions.sol**-vvvv
 
 ```jsx
-// Test function to check for hash collision bug in the HashCollisionBugContract.
+// 测试函数以检查 HashCollisionBugContract 中的哈希冲突错误。
 function testHash_collisions() public {
-    // Emit a log with the name and the result of the hash calculation for inputs "AAA" and "BBB".
+    // 发出一个日志，其中包含输入“AAA”和“BBB”的名称和哈希计算结果。
     emit log_named_bytes32(
         "(AAA,BBB) Hash",
         HashCollisionBugContract.createHash("AAA", "BBB")
     );
 
-    // Call the 'deposit' function of the HashCollisionBugContract with value 1 ether and inputs "AAA" and "BBB".
+    // 调用 HashCollisionBugContract 的“deposit”函数，值为 1 ether 并输入“AAA”和“BBB”。
     HashCollisionBugContract.deposit{value: 1 ether}("AAA", "BBB");
 
-    // Emit a log with the name and the result of the hash calculation for inputs "AA" and "ABBB".
+    // 调用 HashCollisionBugContract 的“deposit”函数，值为 1 ether 并输入“AAA”和“BBB”。
     emit log_named_bytes32(
         "(AA,ABBB) Hash",
         HashCollisionBugContract.createHash("AA", "ABBB")
     );
 
-    // Expect a revert with the message "Hash collision detected" for the following transaction.
-    // Call the 'deposit' function of the HashCollisionBugContract with value 1 ether and inputs "AA" and "ABBB".
-    // This transaction is expected to revert because it might trigger a hash collision bug.
+    // 预计以下事务将返回“检测到哈希冲突”消息。
+     // 使用值为 1 ether 并输入“AA”和“ABBB”来调用 HashCollisionBugContract 的“deposit”函数。
+     // 该事务预计会恢复，因为它可能会触发哈希冲突错误。
     vm.expectRevert("Hash collision detected");
     HashCollisionBugContract.deposit{value: 1 ether}("AA", "ABBB"); //Hash collision detected
 }

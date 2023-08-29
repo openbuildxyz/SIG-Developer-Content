@@ -25,12 +25,9 @@ contract SimpleBank {
     mapping(address => uint) private balances;
 
     function deposit(uint256 amount) public {
-        // Here's the unsafe downcast. If the `amount` is greater than type(uint8).max
-        // (which is 255), then only the least significant 8 bits are stored in balance.
-        // This could lead to unexpected results due to overflow.
-        uint8 balance = uint8(amount);
-
-        // store the balance
+        // 这是不安全的向下转型。 如果 `amount` 大于 type(uint8).max
+         //（即255），那么只有最低有效的8位被存储在平衡中。
+         // 这可能会因溢出而导致意外结果。
         balances[msg.sender] = balance;
     }
 
@@ -44,17 +41,17 @@ contract SimpleBank {
 
 ```jsx
 contract FixedSimpleBank {
-    using SafeCast for uint256; // Use SafeCast for uint256
+    using SafeCast for uint256; // 对 uint256 使用 SafeCast
 
     mapping(address => uint) private balances;
 
     function deposit(uint256 _amount) public {
-        // Use the `toUint8()` function from `SafeCast` to safely downcast `amount`.
-        // If `amount` is greater than `type(uint8).max`, it will revert.
-        // or keep the same uint256 with amount.
-        uint8 amount = _amount.toUint8(); // or keep uint256
+        //使用“SafeCast”中的“toUint8()”函数安全地向下转换“amount”。
+         // 如果 `amount` 大于 `type(uint8).max`，它将恢复。
+         // 或保留与 amount 相同的 uint256。
+        uint8 amount = _amount.toUint8(); // 或保留 uint256
 
-        // Store the balance
+        //存储余额
         balances[msg.sender] = amount;
     }
 
@@ -66,25 +63,25 @@ contract FixedSimpleBank {
 
 ***\*测试方法:\****
 
-仿真测试 --contracts src/test/***\*unsafe-downcast.sol\**** -vvvv
+**forge test--contracts src/test/***\*unsafe-downcast.sol\**** -vvvv
 
 ```jsx
-// Function to test the potential risks of an unsafe type downcast
+// 测试不安全类型向下转型潜在风险的函数
     function testUnsafeDowncast() public {
-        // Deposits 257 units of a token (presumably wei if it's a typical ETH token) in the SimpleBankContract
-        // If the SimpleBankContract stores this value in a uint8 variable, it will overflow and only store 1 (257 mod 256)
+        // 在 SimpleBankContract 中存入 257 个单位的代币（如果是典型的 ETH 代币，大概是 wei）
+         // 如果 SimpleBankContract 将此值存储在 uint8 变量中，它将溢出并仅存储 1 (257 mod 256)
         SimpleBankContract.deposit(257); //overflowed
 
-        // Logs the balance of the SimpleBankContract
-        // If the overflow occurred, it would show 1 despite the deposit of 257
+        // 记录 SimpleBankContract 的余额
+         // 如果发生溢出，尽管存了257，但仍显示1
         console.log(
             "balance of SimpleBankContract:",
             SimpleBankContract.getBalance()
         );
 
-        // Asserts that the balance of the SimpleBankContract should be 1
-        // If it's not, the function will throw an error
-        // If an overflow occurred due to an unsafe downcast to uint8, the balance will indeed be 1
+        // 判断 SimpleBankContract 的余额应该为 1
+         // 如果不是，函数会抛出错误
+         // 如果由于不安全向下转型为 uint8 而发生溢出，则余额确实为 1
         assertEq(SimpleBankContract.getBalance(), 1);
     }
 ```

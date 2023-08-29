@@ -45,12 +45,12 @@ contract SimpleBankBug {
         address _initiator,
         bytes calldata data
     ) external {
-        /* Perform your desired logic here
+        /* 在这里执行你想要的逻辑
         Open opsition, close opsition, drain funds, etc.
         _closetrade(...) or _opentrade(...)
         */
 
-        // transfer all borrowed assets back to the lending pool
+        // 将所有借入资产转回出借池
         IERC20(USDa).safeTransfer(address(lendingPool), amounts);
     }
 }
@@ -85,10 +85,10 @@ contract FixedSimpleBank {
         address _initiator,
         bytes calldata data
     ) external {
-        // Mitigation: make sure to check the initiator
+        // 措施：确保检查启动器
         **require(_initiator == address(this), "Unauthorized");** 
 
-        // transfer all borrowed assets back to the lending pool
+        // 将所有借入资产转回出借池
         IERC20(USDa).safeTransfer(address(lendingPool), amounts);
     }
 }
@@ -96,16 +96,16 @@ contract FixedSimpleBank {
 
 ***\*测试方法:\****
 
-**仿真测试**--contracts src/test/**Flashloan-flaw.sol** -vvvv
+**forge test**--contracts src/test/**Flashloan-flaw.sol** -vvvv
 
 ```jsx
-// Test function to demonstrate a potential flash loan flaw.
+// 测试函数以演示潜在的闪贷缺陷。
 function testFlashLoanFlaw() public {
-    // Call the 'flashLoan' function of the LendingPoolContract.
-    // This function initiates a flash loan of 500 ether from the lending pool.
-    // The flash loan is sent to the SimpleBankBugContract, identified by its address.
-    // The last argument "0x0" is an optional parameter representing additional data for the flash loan.
-    // The function signature does not specify the return type, so it's assumed that the flashLoan function completes successfully.
+    // 调用 LendingPoolContract 的 'flashLoan' 函数。
+     // 该函数从借贷池发起 500 以太币的闪电贷。
+     // 闪电贷被发送到 SimpleBankBugContract，由其地址标识。
+     // 最后一个参数“0x0”是可选参数，表示闪贷的附加数据。
+     // 函数签名没有指定返回类型，因此假设 flashLoan 函数成功完成。
     LendingPoolContract.flashLoan(
         500 ether,
         address(SimpleBankBugContract),

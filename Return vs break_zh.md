@@ -97,36 +97,36 @@ contract FixedBank {
 
 ***\*测试方法:\****
 
-**仿真测试 --contracts src/test/***\*return-break.sol\**** -vvvv**
+**forge test --contracts src/test/***\*return-break.sol\**** -vvvv**
 
 ```jsx
-// Test function to check for a return bug in the BankContractBugContract.
+// 测试函数以检查 BankContractBugContract 中的返回错误。
 function testReturnBug() public {
-    // Create dynamic arrays to store bank addresses and bank names.
+    // 创建动态数组来存储银行地址和银行名称。
     address[] memory bankAddresses = new address[](3);
     string[] memory bankNames = new string[](3);
 
-    // Bank account 1
-    // Set the address and name for the first bank account.
+    //银行账户1
+     // 设置第一个银行帐户的地址和名称。
     bankAddresses[0] = address(1);
     bankNames[0] = "ABC Bank";
 
-    // Bank account 2
-    // Set the address and name for the second bank account.
+    // 银行账户2
+     // 设置第二个银行帐户的地址和名称。
     bankAddresses[1] = address(2);
     bankNames[1] = "XYZ Bank";
 
-    // Bank account 3
-    // Set the address and name for the third bank account.
+    //银行账户3
+     // 设置第三个银行帐户的地址和名称。
     bankAddresses[2] = address(3);
     bankNames[2] = "Global Bank";
 
-    // Call the 'addBanks' function of the BankContractBugContract and pass the bank addresses and names.
-    // This function is expected to add the banks to the contract's storage.
+    //调用 BankContractBugContract 的 'addBanks' 函数并传递银行地址和名称。
+     // 该函数预计会将银行添加到合约的存储中。
     BankContractBugContract.addBanks(bankAddresses, bankNames);
 
-    // Call the 'getBankCount' function of the BankContractBugContract.
-    // This function is expected to return the total number of banks added to the contract.
+    // 调用 BankContractBugContract 的“getBankCount”函数。
+     // 该函数预计返回添加到合约中的银行总数。
     BankContractBugContract.getBankCount();
 }
 ```
