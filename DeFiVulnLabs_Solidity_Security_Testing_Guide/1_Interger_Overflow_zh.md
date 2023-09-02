@@ -1,12 +1,12 @@
 # 整数溢出
+
 [Overflow.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Overflow.sol)  
 
 **名称：** 整数溢出漏洞  
 **描述：**  
 TimeLock 合约在智能合约代码中存在一个漏洞，允许攻击者从 TimeLock 合约中提前提取其存款。  
-这个漏洞是因为 increaseLockTime 函数中发生了溢出，该函数以一种导致锁定时间回绕为 0 的方式操作锁定时间，  
+这个漏洞是因为 increaseLockTime 函数中发生了溢出，该函数以一种导致锁定时间溢出为 0 的方式操控锁定时间，  
 使得攻击者能够在实际等待期到期之前提取他们的资金    
-
 
 **场景：**     
 这个智能合约是为了充当时间保险库。  
@@ -23,7 +23,8 @@ TimeLock 合约在智能合约代码中存在一个漏洞，允许攻击者从 T
 
 **发生什么了？**  
 攻击导致TimeLock.lockTime产生溢出，这使得攻击者能够在1周的锁仓时间之前就取出资金。  
-Import: Solidity < 0.8 且没有使用 SafeMath 
+
+**影响范围**: Solidity < 0.8 且没有使用 SafeMath 
 
 **解决方法：**  
 为了解决溢出问题，可以使用SafeMath库或者使用版本高于0.8的Solidity  
@@ -58,9 +59,11 @@ contract TimeLock {
         require(sent, "Failed to send Ether");
     }
 }
-```  
+```
 **如何测试：**  
-forge test --contracts src/test/Overflow.sol -vvvv  
+
+`forge test --contracts src/test/Overflow.sol -vvvv`  
+
 ```solidity
 // 这个testOverflow 函数, 用于测试溢出漏洞
     function testOverflow() public {
@@ -113,7 +116,7 @@ forge test --contracts src/test/Overflow.sol -vvvv
         //尝试取款Alice的资金。由于锁仓尚未到期，这应该会导致回滚。
         TimeLockContract.withdraw(); // 预期会回滚
     }
-```  
+```
 **红框：** TimeLock.lockTime发生溢出  
 **紫框：** 溢出已修复
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fd444eaff-b1ef-4171-8890-76186c4de58a%2FUntitled.png?table=block&id=6ec73bdb-955c-42b4-a7c6-5bce2bf97805&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

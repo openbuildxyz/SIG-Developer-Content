@@ -1,11 +1,12 @@
 # Selfdestruct
+
 [Selfdestruct.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Selfdestruct.sol)  
 
 **名称：** 自毁漏洞  
 
 **描述：**    
 EtherGame合约的代码中的有一个自毁漏洞，这个漏洞允许攻击者通过EtherGame合约自毁（使用selfstruct操作码）来破坏游戏。  
-该漏洞的产生是由于Attack合约中的doc函数在收到大量以太币后，执行自毁操作并将合约剩余的以太币全部发送给EtherGame合约。由于执行了自毁操作，EtherGame合约的功能被永久禁用，这使得任何人都无法存入以太币或者领取获胜者的奖励。
+该漏洞的产生是由于Attack合约中的`dos`函数在收到大量以太币后，执行自毁操作并将合约剩余的以太币全部发送给EtherGame合约。由于执行了自毁操作，EtherGame合约的功能被永久禁用，这使得任何人都无法存入以太币或者领取获胜者的奖励。
 
 
 **场景：**  
@@ -14,11 +15,15 @@ EtherGame合约的代码中的有一个自毁漏洞，这个漏洞允许攻击�
 3. 部署Attack合约并在构造函数中传入EtherGame合约地址
 4. 调用Attack.attack发送5个以太币到EtherGame合约。这将破坏游戏，任何人都不可能成为赢家。
 
+
+
 **发生了什么？**  
 攻击者迫使EtherGame合约的余额等于7个以太币。  
 现在任何人都不能向EtherGame合约存入以太币，也无法确定赢家。  
 因为访问控制缺失或者不足，攻击者可以自毁合约。  
 selefdestruct(address)函数会从合约地址删除所有的字节码并且发送所有的以太币到指定的合约地址。  
+
+
 
 **解决办法：**  
 不要依赖this.balance来获取存入的以太币余额，而是用一个状态变量来表示存入的总金额。  
@@ -49,7 +54,8 @@ contract EtherGame {
 }
 ```
 **如何测试：**  
-forge test --contracts src/test/Selfdestruct.sol -vvvv  
+`forge test --contracts src/test/Selfdestruct.sol -vvvv`  
+
 ```
 // 测试使用自毁函数的场景
 function testSelfdestruct() public {
@@ -116,6 +122,6 @@ contract Attack {
         selfdestruct(addr);
     }
 }
-```  
+```
 **红框：** 攻击成功，游戏结束。
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F1b7b4334-de84-448a-a344-646eb909fb4f%2FUntitled.png?table=block&id=ed7eeade-45f5-4ed8-a8e7-b6e940b0af07&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

