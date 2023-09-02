@@ -1,4 +1,5 @@
-# 随机性 
+# 随机性
+
 [Randomness.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Randomness.sol)   
 
 **名称：** 可预测的随机性漏洞  
@@ -30,7 +31,7 @@ Attack合约通过简单地复制计算随机数的代码，计算出了正确�
 https://solidity-by-example.org/hacks/randomness/
 
 **GuessTheRandomNumber合约：**  
-```
+```solidity
 contract GuessTheRandomNumber {
     constructor() payable {}
 
@@ -47,10 +48,11 @@ contract GuessTheRandomNumber {
         }
     }
 }
-```  
-**如何测试：**  
-forge test --contracts src/test/Randomness.sol-vvvv  
 ```
+**如何测试：**  
+`forge test --contracts src/test/Randomness.sol -vvvv`  
+
+```solidity
 // 用于测试对存在可预测随机性漏洞合约的攻击
 function testRandomness() public {
     // 将地址值从以太坊虚拟机分配给“alice”和“eve”。
@@ -108,6 +110,6 @@ contract Attack {
         return address(this).balance;
     }
 }
-```  
+```
 **红框：** 猜中答案并赢得比赛  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fda3d6929-9bc8-478e-a027-cff9c2a65c0d%2FUntitled.png?table=block&id=216b1af8-21a5-4e09-a63e-e4523705c968&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

@@ -24,7 +24,7 @@ https://consensys.github.io/smart-contract-best-practices/attacks/reentrancy/
 
 
 **EtherStore合约：**  
-```
+```solidity
 contract EtherStore {
     mapping(address => uint256) public balances;
 
@@ -48,8 +48,8 @@ contract EtherStore {
 
 **如何测试：**  
 
-forge test --contracts src/test/Reentrancy.sol-vvvv  
-```
+`forge test --contracts src/test/Reentrancy.sol -vvvv`  
+```solidity
 // 用于测试EtherStore合约是否存在重入攻击漏洞的函数 
 function testReentrancy() public {
     // 执行攻击合约的Attack函数

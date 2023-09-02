@@ -29,7 +29,7 @@ selefdestruct(address)函数会从合约地址删除所有的字节码并且发�
 不要依赖this.balance来获取存入的以太币余额，而是用一个状态变量来表示存入的总金额。  
 
 **EtherGame 合约：**  
-```
+```solidity
 contract EtherGame {
     uint public constant targetAmount = 7 ether;
     address public winner;

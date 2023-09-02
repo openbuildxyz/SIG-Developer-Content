@@ -12,7 +12,7 @@
 避免在只读函数中进行任何的状态修改操作。  
 
 **Makerdao 示例：**  
-```
+```solidity
 // 如果在状态修改pool函数执行期间被调用，这将被回滚。
 if (nonreentrant) {
 uint256[2] calldata amounts;
@@ -27,7 +27,7 @@ https://www.youtube.com/watch?v=0fgGTRlsDxI
 
 
 **VlunContract:**  
-```
+```solidity
 contract VulnContract {
     IERC20 public constant token = IERC20(LP_TOKEN);
     ICurve private constant pool = ICurve(STETH_POOL);
@@ -52,10 +52,11 @@ contract VulnContract {
         return reward;
     }
 }
-```  
-**如何测试：**  
-forge test --contracts src/test/ReadOnlyReentrancy.sol -vvvv  
 ```
+**如何测试：**  
+`forge test --contracts src/test/ReadOnlyReentrancy.sol -vvvv`  
+
+```solidity
 // 测试VulnContract合约中只读重入漏洞的函数
 function testPwn() public {
     // 通过漏洞合约将10个ether质押到VulnContract合约
@@ -137,7 +138,7 @@ contract ExploitContract {
         console.log("Reward if Read-Only Reentrancy is invoked: ", reward);
     }
 }
-```  
+```
 **红色框：** 攻击成功，价格被操控  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Ff974125e-47d0-42ca-89bc-1d9ef7608094%2FUntitled.png?table=block&id=db05153a-1fed-46f6-91fe-6a1caae5e036&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)
 

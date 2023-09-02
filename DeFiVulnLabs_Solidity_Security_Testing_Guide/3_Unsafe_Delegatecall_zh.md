@@ -14,14 +14,13 @@ Proxy合约是为了帮助用户调用逻辑合约而设计的。
 Proxy合约的owner被硬编码为0xdeadbeef。  
 你可以操纵代理合约的owner吗？  
 
-
 **解决方法：**  
-为了缓解Proxy合约所有者被操纵漏洞，除非明确要求delegatecall，否则不要使用。即使要使用时也要确保使用delegatecall的安全性。  
+为了缓解Proxy合约所有者被操纵漏洞，除非明确需求使用 delegatecall，否则尽量不要使用。即使要使用时也要确保使用delegatecall的安全性。  
 如果对于合约的功能而言委托调用是必要的，务必验证和清理输入，以避免出现意外行为。  
 
 
 **Proxy 合约：**  
-```
+```solidity
 contract Proxy {
     address public owner = address(0xdeadbeef); // slot0
     Delegate delegate;
@@ -35,13 +34,14 @@ contract Proxy {
         require(suc, "Delegatecall failed");
     }
 }
-```     
+```
 
 
 **如何测试：**  
 
-forge test --contracts src/test/Delegatecall.sol-vvvv 
-```
+`forge test --contracts src/test/Delegatecall.sol -vvvv` 
+
+```solidity
 // 测试使用delegatecall场景的函数
 function testDelegatecall() public {
     // 初始化一个新的委托合约，即“逻辑合约”。
@@ -80,6 +80,6 @@ contract Delegate {
         owner = msg.sender;
     }
 }
-```  
+```
 **红框：** 攻击成功，owner已经更改
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F3d7b2665-e934-4b5a-b9ec-1302656f7da8%2FUntitled.png?table=block&id=6be82235-a425-44a7-9174-c6bfb0e027ec&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

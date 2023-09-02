@@ -7,17 +7,17 @@ KingOfEther合约有一个游戏，用户可以通过发送比当前余额更多
 当新用户发送更多以太币时，合约试图将之前的余额返还给上一位“国王”。   
 
 然而，这个机制可能被利用。攻击者的合约(这里称为Attack合约)可以成为国王，  
-然后使回退函数回滚或消耗超过规定的gas限制，从而导致KingOfEther合约在尝试将以太币返回给上一位国王时失败。
-
+然后使回退函数回滚或消耗超过规定的gas限制，从而导致KingOfEther合约在尝试将以太币发给上一位国王时失败。
 
 **缓解措施：**  
-使用拉取支付模式。一种防止这种情况的方法是允许用户提取他们的以太币，而不是直接发送给他们。  
+使用提取支付模式。一种防止这种情况的方法是允许用户提取他们的以太币，而不是直接发送给他们。  
 
 **参考：**  
 https://slowmist.medium.com/intro-to-smart-contract-security-audit-dos-e23e9e901e26  
 
 **KingOfEther合约：**  
-```
+
+```solidity
 contract KingOfEther {
     address public king;
     uint public balance;
@@ -32,10 +32,11 @@ contract KingOfEther {
         king = msg.sender;
     }
 }
-```  
+```
 **如何测试：**  
 forge test --contracts src/test/DOS.sol -vvvv  
-```
+
+```solidity
 // 这是一个测试函数，用于执行DoS攻击的场景
 function testDOS() public {
     // 声明了两个地址，分别用于模拟用户Alice和Bob。
@@ -93,7 +94,7 @@ contract Attack {
         kingOfEther.claimThrone{value: msg.value}();
     }
 }
-```  
-**红框：在攻击漏洞后，没有人能够赢得这个游戏  
+```
+**红框：在攻击漏洞后，没有人能够赢得这个游戏**  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F250bdebe-a8ed-459a-b62f-bcf5c992c156%2FUntitled.png?table=block&id=17d7c11c-3273-49da-95a4-d6ba9817ad4b&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)
 

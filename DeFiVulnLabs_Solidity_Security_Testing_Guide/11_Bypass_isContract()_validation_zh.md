@@ -1,4 +1,5 @@
-# 绕过isContract()验证 
+# 绕过 isContract() 验证
+
 [Bypasscontract.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Bypasscontract.sol)  
 
 **名称：** 绕过isContract()验证  
@@ -12,7 +13,7 @@ https://www.infuy.com/blog/bypass-contract-size-limitations-in-solidity-risks-an
 
 
 **Target合约：**  
-```
+```solidity
 contract Target {
     function isContract(address account) public view returns (bool) {
         // 此方法使用了EVM的‘extcodesize’汇编指令，来检查给定地址处的代码大小
@@ -31,10 +32,10 @@ contract Target {
         pwned = true;
     }
 }
-```  
+```
 **如何测试：**  
 forge test --contracts src/test/**Bypasscontract.sol**-vvvv  
-```
+```solidity
 // 测试攻击合约是否可以绕过目标合约检查的函数。
 function testBypassContractCheck() public {
     // 在攻击之前记录Target合约的当前状态。 
@@ -78,7 +79,7 @@ contract Attack {
         Target(_target).protected();
     }
 }
-```  
+```
 **红框：**  
 攻击者只需要在智能合约的构造函数中编写代码，就可以绕过是否为智能合约的检测机制。  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F273d7caf-d1ec-435a-b60a-ef1dc2698ca1%2FUntitled.png?table=block&id=164fb814-62c9-4308-b378-aba274e06594&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

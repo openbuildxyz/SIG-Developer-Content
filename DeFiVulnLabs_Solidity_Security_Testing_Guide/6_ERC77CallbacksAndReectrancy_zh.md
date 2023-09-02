@@ -1,25 +1,25 @@
 # ERC777 回调和重入
 [ERC777-reentrancy.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/ERC777-reentrancy.sol)  
 
-**名称：** ERC777重入性漏洞
+**名称：** ERC777 重入漏洞
 
 **描述：**  
 ERC777代币允许通过钩子函数在代币转账期间调用任意回调。  
-如果没有使用重入性保护机制，恶意合约地址可能会在这些回调中引发重入性攻击。
+如果没有使用重入保护机制，恶意合约地址可能会在这些回调中引发重入攻击。
 
 **场景：**  
-每个外部账户(EOA)的最大索赔次数为1000次，你如何绕过这个限制？  
+每个外部账户(EOA)的最大申领次数为1000次，你如何绕过这个限制？  
 
 
 **缓解方法：**  
-遵循“检查-效果-交互”原则，并使用OpenZeppelin的重入性保护机制。
- 
+遵循“检查-效果-交互”原则，并使用OpenZeppelin的重入保护机制。
+
 **参考：**  
 https://medium.com/cream-finance/c-r-e-a-m-finance-post-mortem-amp-exploit-6ceb20a630c5 
 
 
 **合约：**  
-```
+```solidity
 contract SimpleBank is Test {
     ERC777 private token;
     uint maxMintsPerAddress = 1000;
@@ -73,10 +73,10 @@ contract SimpleBank is Test {
     ) external {}
     receive() external payable {}
 }
-```  
-**如何测试：**  
-forge test --contracts src/test//ERC777-reentrancy.sol-vvvv   
 ```
+**如何测试：**  
+`forge test --contracts src/test//ERC777-reentrancy.sol -vvvv`   
+```solidity
 // 用于测试SimpleBank合约与ERC777代币之间的重入漏洞
 function testERC777Reentrancy() public {
     // 初始化用于管理ERC777代币接口的ERC1820Registry合约
@@ -127,6 +127,6 @@ function tokensReceived(
 
 // 接收以太币的回退函数
 receive() external payable {}
-```  
+```
 **红色：** 绕过最大铸造次数为1000的限制。
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F65488d49-0d6a-4c73-ab8d-75827b6a3fae%2FUntitled.png?table=block&id=5970a19d-75ee-44d3-9455-3fedec380a37&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

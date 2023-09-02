@@ -19,7 +19,7 @@ https://quillaudits.medium.com/accessing-private-data-in-smart-contracts-quillau
 
 
 **Vault合约：**  
-```
+```solidity
 contract Vault {
     // 插槽 0
     uint256 private password;
@@ -51,10 +51,11 @@ contract Vault {
         return bytes32(a);
     }
 }
-```  
-**如何测试：**  
-forge test --contracts src/test/Privatedata.sol-vvvv  
 ```
+**如何测试：**  
+`forge test --contracts src/test/Privatedata.sol -vvvv`  
+
+```solidity
     // testReadprivatedata()的函数声明，这是一个公共函数。
 function testReadprivatedata() public {
         
@@ -81,6 +82,6 @@ function testReadprivatedata() public {
     // 记录从合约存储读取的特定数组元素的值，将其从bytes32转换为uint256。
     console.log(uint256(user));
 }
-```  
+```
 **红色框：** 读取私有数据成功。  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fbfa76e84-7cd5-45ce-8b04-9032673ab3af%2FUntitled.png?table=block&id=09c2a521-e269-4e04-8e81-7516e5c8ac58&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2) 

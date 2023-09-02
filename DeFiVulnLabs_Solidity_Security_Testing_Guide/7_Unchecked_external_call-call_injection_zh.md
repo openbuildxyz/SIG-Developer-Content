@@ -1,7 +1,8 @@
-# 未经检查的外部调用——调用注入  
+# 未经检查的外部调用——call调用注入
+
 [UnsafeCall.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/UnsafeCall.sol)  
 
-**名称：**  不安全的调用漏洞  
+**名称：**  不安全的call调用漏洞  
 
 **描述：**  
 在TokenWhale合约的approveAndCallcode函数中，存在一个漏洞允许执行带有任意数据的任意调用，从而导致潜在的安全风险和意外后果。  
@@ -9,7 +10,7 @@
 这可能导致意外行为、重入攻击或未经授权的操作。
 
 本练习涉及到对合约进行低级别调用，其中输入和返回值未经检查。  
-如果调用数据可控，就很容易引发任意函数执行 
+如果调用数据可控制的，就很容易引发任意函数执行 
 
 
 
@@ -21,7 +22,7 @@ https://blog.li.fi/20th-march-the-exploit-e9e1c5c03eb9
 
 
 **TokenWhale 合约：**  
-```
+```solidity
 contract TokenWhale {
     address player;
 
@@ -79,7 +80,7 @@ contract TokenWhale {
         _transfer(to, value);
     }
 
-    /* 授权然后调用合约代码*/
+    //  授权后调用合约代码
     function approveAndCallcode(
         address _spender,
         uint256 _value,
@@ -93,12 +94,12 @@ contract TokenWhale {
         console.log("success:", success);
     }
 }
-```  
-
+```
 
 **如何测试：**  
-forge test --contracts src/test/UnsafeCall.sol-vvvv  
-```
+`forge test --contracts src/test/UnsafeCall.sol -vvvv`  
+
+```solidity
 // 测试不安全调用的函数
 function testUnsafeCall() public {
     // 设置环境变量
@@ -148,6 +149,6 @@ function testUnsafeCall() public {
 
 // 接收以太币的回退函数
 receive() external payable {}
-```  
+```
 **红色框：** 成功利用漏洞，成功掏空了TokenWhale合约。  
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fef522203-1293-43f6-bf50-746d2a4b8457%2FUntitled.png?table=block&id=442bc8fe-4714-4112-a892-725b88a7b32e&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

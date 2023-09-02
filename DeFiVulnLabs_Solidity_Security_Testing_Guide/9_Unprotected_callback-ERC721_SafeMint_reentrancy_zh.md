@@ -1,7 +1,8 @@
-# 不受保护的回调——ERC721 SafeMint重入  
+# 不受保护的回调——ERC721 SafeMint 重入
+
 [Unprotected-callback.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Unprotected-callback.sol)  
 
-**名称：** 不受保护的回调——ERC721 SafeMint可重入漏洞  
+**名称：** 不受保护的回调 —— ERC721 SafeMint可重入漏洞  
 
 **描述：**  
 合约ContractTest正在利用回调功能绕过由MaxMint721合约设置的最大铸造限制。这是通过触发onERC721Received函数来实现的，该函数在内部再次调用mint函数。  
@@ -21,7 +22,7 @@ https://www.paradigm.xyz/2021/08/the-dangers-of-surprising-code
 
 
 **MaxMint721合约：**  
-```
+```solidity
 contract MaxMint721 is ERC721Enumerable {
     uint256 public MAX_PER_USER = 10;
 
@@ -38,10 +39,11 @@ contract MaxMint721 is ERC721Enumerable {
         }
     }
 }
-```  
-**如何测试：**  
-forge test --contracts src/test/**Unprotected-callback.sol** -vvvv
 ```
+**如何测试：**  
+`forge test --contracts src/test/Unprotected-callback.sol -vvvv`
+
+```solidity
 // 测试铸造新代币的公共函数
 function testSafeMint() public {
     // 创建MaxMint721合约的新实例。
@@ -85,6 +87,6 @@ function onERC721Received(
     // 这是成功接收ERC721代币的标准返回值
     return this.onERC721Received.selector;
 }
-```  
+```
 **红框：**成功绕过maxMint限制   
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F86e9ee9c-86cb-4ef2-9c5a-cf8774cacda8%2FUntitled.png?table=block&id=a2eb9107-aa44-4bc6-a6b6-0c1a0f284393&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)

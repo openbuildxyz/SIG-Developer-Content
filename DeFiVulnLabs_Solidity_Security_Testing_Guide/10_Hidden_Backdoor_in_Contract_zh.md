@@ -1,17 +1,16 @@
-# 合约中隐藏的后门  
+# 合约中隐藏的后门
+
 [Backdoor-assembly.sol](https://github.com/SunWeb3Sec/DeFiVulnLabs/blob/main/src/test/Backdoor-assembly.sol)  
 
 **名称：** 合约中隐藏后门漏洞  
 
 **描述：**   
-在这份合同中，一个看似公平的“LotteryGame”合约被巧妙地设计为允许
-合同部署者/管理员拥有隐藏特权。  
+在这份合约中，一个看似公平的“LotteryGame”合约被巧妙地设计为允许合约部署者/管理员拥有隐藏特权。  
 这是通过使用汇编级的访问来存储变量，其中一个“referee”函数被设计为提供了一个管理后门。  
 “pickWinner”函数似乎是随机选择一个赢家，但实际上它允许管理员设置赢家。  
 这绕过了通常的访问控制，可以被未经授权的用户用来从奖池中提取资金，类似于rug pull的操作。  
 
 攻击者可以通过编写内联汇编来操纵智能合约，以实现后门功能。任何敏感的参数都可以随时被更改。  
-
 
 **场景：**  
 抽奖游戏：任何人都可以调用pickWinner函数，如果你幸运的话，就能获得奖金。  
@@ -19,7 +18,7 @@
 合约中似乎没有setWinner函数，管理员如何进行rug操作呢？  
 
 **LotteryGame合约：**  
-```
+```solidity
 contract LotteryGame {
     uint256 public prize = 1000;
     address public winner;
@@ -52,10 +51,13 @@ contract LotteryGame {
         return winner;
     }
 }
-```  
+```
 **如何测试：**  
 forge test --contracts src/test/**Backdoor-assembly.sol** -vvvv
-```
+
+
+
+```solidity
 // 定义一个名为 testBackdoorCall 的公共函数
 function testBackdoorCall() public {
     // 声明两个地址，alice和bob，并将它们的值设置为分别从vm.addr(1)和vm.addr(2)的地址。
@@ -77,7 +79,7 @@ function testBackdoorCall() public {
     // 在pickWinner函数调用后，打印当前抽奖奖金的金额。
     console.log("Prize: ", LotteryGameContract.prize());
 
-    // 印一条消息，表示管理员将设置赢家以取走奖金。
+    // 打印一条消息，表示管理员将设置赢家以取走奖金。
     console.log("Now, admin sets the winner to drain out the prize.");
 
     // 再次调用LotteryGameContract的pickWinner函数，但这次将 Bob的地址作为参数传递。。
@@ -85,6 +87,6 @@ function testBackdoorCall() public {
 
     // 打印管理员通过操纵设置的赢家地址。
     console.log("Admin manipulated winner: ", LotteryGameContract.winner());
-```  
+```
 **红框：** 恶意设置的赢家可以中奖。
 ![image](https://web3sec.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fc89ca10c-c526-479d-83f5-a7f798142b42%2FUntitled.png?table=block&id=65b900de-4ff0-4ffa-8685-071dd4112db5&spaceId=369b5001-5511-4fe6-a099-48af1d841f20&width=2000&userId=&cache=v2)
